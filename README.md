@@ -57,6 +57,7 @@ curl -fsSL https://raw.githubusercontent.com/WaytoAIC/amazon-listing-generator/v
 一个面向亚马逊卖家的 Listing 生成 skill，用于把产品资料、竞品结论、评论洞察和关键词池整理成完整的 Amazon Listing 产出包。
 
 它默认支持完整 8 模块一键生成，也支持只生成单个模块，以及基于已有 Listing 草稿做审查和局部重写。
+如果系统已经接入 Sorftime、卖家精灵等 Amazon 数据 MCP，这个 skill 会优先利用它们补强关键词、竞品、评论和类目数据，再进入 Listing 起草。
 
 ## 中文
 
@@ -66,6 +67,7 @@ curl -fsSL https://raw.githubusercontent.com/WaytoAIC/amazon-listing-generator/v
 - 把零散产品信息先归一化，再按模块顺序输出，避免漏字段和模块间冲突
 - 兼顾前台转化、移动端可读性、SEO 覆盖和 Rufus 可回答性
 - 在已有 Listing 场景下，先识别事实缺口、风险和改写优先级，再只改指定模块
+- 如果接了 Sorftime、卖家精灵等 MCP，会先补关键词证据、竞品结构、评论痛点和类目定位
 
 ### 它的核心方法
 
@@ -91,6 +93,7 @@ curl -fsSL https://raw.githubusercontent.com/WaytoAIC/amazon-listing-generator/v
 - UI 元数据：[agents/openai.yaml](./agents/openai.yaml)
 - SOP 与工作流说明：[references/workflow.md](./references/workflow.md)
 - 输入归一化规范：[references/intake-schema.md](./references/intake-schema.md)
+- MCP 数据补强规范：[references/mcp-data-enrichment.md](./references/mcp-data-enrichment.md)
 - 8 模块提示骨架：[references/module-prompts.md](./references/module-prompts.md)
 - 一键安装脚本：[install.sh](./install.sh)
 
@@ -116,6 +119,7 @@ curl -fsSL https://raw.githubusercontent.com/WaytoAIC/amazon-listing-generator/v
 This skill turns product facts, competitor insights, review findings, and keyword pools into a structured Amazon Listing workflow.
 
 It supports both full-pack generation across eight modules and targeted single-module output, while also handling existing-listing audits and partial rewrites.
+When Sorftime, Sellersprite, or similar Amazon data MCPs are connected, the skill enriches keyword, competitor, review, and category data before drafting.
 
 ### What it helps with
 
@@ -123,6 +127,7 @@ It supports both full-pack generation across eight modules and targeted single-m
 - normalizing fragmented inputs before drafting so modules stay consistent
 - improving mobile-first readability, SEO coverage, and Rufus answerability at the same time
 - auditing an existing draft first, then rewriting only the requested modules
+- enriching the brief with connected Amazon data MCPs before writing when more evidence is needed
 
 ### Included files
 
@@ -130,6 +135,7 @@ It supports both full-pack generation across eight modules and targeted single-m
 - UI metadata: [agents/openai.yaml](./agents/openai.yaml)
 - Workflow reference: [references/workflow.md](./references/workflow.md)
 - Intake normalization schema: [references/intake-schema.md](./references/intake-schema.md)
+- MCP enrichment guide: [references/mcp-data-enrichment.md](./references/mcp-data-enrichment.md)
 - Module prompt skeletons: [references/module-prompts.md](./references/module-prompts.md)
 - Installer: [install.sh](./install.sh)
 

@@ -68,6 +68,45 @@ existing_listing:
   search_terms: ""
   images_info: ""
   a_plus_content: ""
+data_sources:
+  user_materials:
+    - ""
+  marketplace_urls:
+    - ""
+  mcp:
+    sorftime:
+      enabled: false
+      own_product_data: []
+      keyword_data: []
+      competitor_data: []
+      review_data: []
+      category_data: []
+    sellersprite:
+      enabled: false
+      own_product_data: []
+      keyword_data: []
+      competitor_data: []
+      review_data: []
+      market_data: []
+market_positioning:
+  category: ""
+  price_band: ""
+  competitor_patterns:
+    - ""
+keyword_evidence:
+  core:
+    - ""
+  supporting:
+    - ""
+  long_tail:
+    - ""
+review_evidence:
+  pains:
+    - ""
+  expectations:
+    - ""
+  misuse:
+    - ""
 ```
 
 ## 字段归一化规则
@@ -91,6 +130,16 @@ existing_listing:
 - `competitor_insights` 写“什么信息值得前置”，不要只写竞品卖得好不好。
 - `review_insights` 按痛点、期待、误用拆分，便于直接映射到五点、图片和 Rufus 问答。
 - `semantic_buckets` 用于 Search Terms 和后 3 条五点的语义补位。
+- `market_positioning` 用于判断产品要站在哪个价格带、风格带和竞品带上说话。
+- `keyword_evidence` 用于存放 Sorftime、卖家精灵等 MCP 跑出来的关键词证据，不要和最终前台文案混写。
+- `review_evidence` 用于存放评论抓取后的原始问题类型，便于回溯结论依据。
+
+### MCP 数据字段
+
+- `data_sources.mcp.sorftime` 和 `data_sources.mcp.sellersprite` 只记录“从哪里拿到什么类型的数据”，不要求逐条抄工具原始返回。
+- `own_product_data` 可用于补事实，但如果与用户提供的官方资料冲突，必须先标冲突。
+- `keyword_data`、`competitor_data`、`review_data`、`category_data`、`market_data` 属于辅助证据，主要用于排序、筛词和找缺口。
+- 如果系统里有多个 Amazon 数据 MCP，可组合使用，但要避免把同一类结论当作多个独立事实重复叠加。
 
 ### 现有 Listing
 
@@ -126,4 +175,5 @@ existing_listing:
 
 - 用户原始资料、官方规格、包装清单、认证信息属于事实。
 - 竞品总结、评论洞察、关键词意图属于推断性辅助信息。
+- MCP 抓到的商品详情、关键词结果、评论结果和市场数据默认属于“外部证据”，除非用户确认，否则不要自动升级成前台事实。
 - 最终前台文案只可以把推断用于“表达排序”和“卖点前置”，不能把推断写成新事实。

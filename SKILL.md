@@ -1,6 +1,6 @@
 ---
 name: amazon-listing-generator
-description: 生成和优化亚马逊 Listing 全套内容的内部团队技能。用于根据产品资料、竞品结论、评论洞察和关键词池，生成或重写标题、五点、Search Terms、主附图 Brief、A+ Brief、视频脚本、Rufus 问答验证和 Listing 自查；也用于移动端优先优化、SEO 与 Rufus 协同改写、已有 Listing 审核和局部重写。
+description: 生成和优化亚马逊 Listing 全套内容的内部团队技能。用于根据产品资料、竞品结论、评论洞察和关键词池，生成或重写标题、五点、Search Terms、主附图 Brief、A+ Brief、视频脚本、Rufus 问答验证和 Listing 自查；也用于移动端优先优化、SEO 与 Rufus 协同改写、已有 Listing 审核和局部重写。若系统已接入 Sorftime、卖家精灵等 Amazon 数据 MCP，应先做数据补强，再起草 Listing。
 ---
 
 # Amazon Listing Generator
@@ -13,7 +13,8 @@ description: 生成和优化亚马逊 Listing 全套内容的内部团队技能�
 
 1. 先读 [references/intake-schema.md](./references/intake-schema.md)，把用户提供的信息整理成统一输入结构。
 2. 再读 [references/workflow.md](./references/workflow.md)，确认移动端优先、双读者、Rufus 明示和完整生成顺序。
-3. 最后只读取 [references/module-prompts.md](./references/module-prompts.md) 中与当前任务有关的模块章节，不要把全部模块一起加载。
+3. 如果系统可用 Sorftime、卖家精灵或其他 Amazon 数据 MCP，读 [references/mcp-data-enrichment.md](./references/mcp-data-enrichment.md)，先补强关键词、竞品、评论、类目和兼容风险信息。
+4. 最后只读取 [references/module-prompts.md](./references/module-prompts.md) 中与当前任务有关的模块章节，不要把全部模块一起加载。
 
 ## 任务判断
 
@@ -34,9 +35,11 @@ description: 生成和优化亚马逊 Listing 全套内容的内部团队技能�
   8. Listing自查
 - 单模块模式只输出用户点名的模块，不顺带生成其他模块。
 - 已有 Listing 优化模式先做缺口识别，再只重写用户指定模块；如果未指定模块，优先给出审查结论和改写优先级。
+- 如果系统已接入 Sorftime、卖家精灵等 MCP，优先在起草前补强以下信息：关键词池、竞品前置信息、评论痛点、兼容风险、类目定位和市场词路。
 - Search Terms 必须依赖已生成或已提供的标题与五点，确保正确排除 `used_terms`。
 - Rufus 验证只能基于 Listing 中明确写出的文本、参数和属性回答，不能用常识补完。
 - 自查模块必须输出结构化检查表，覆盖标题、图片、五点、描述、后台关键词、A+ 与整体一致性。
+- 所有 MCP 结果默认只用于内部判断、排序和补充证据，不能把销量、BSR、PPC、评论比例或竞品数据直接写成面向消费者的前台宣称。
 
 ## 缺失信息处理
 
@@ -59,6 +62,8 @@ description: 生成和优化亚马逊 Listing 全套内容的内部团队技能�
   - 统一输入字段、字段归一化规则、各模块阻塞项判断。
 - [references/workflow.md](./references/workflow.md)
   - 好 Listing 的判断标准、SOP 流程、移动端优先和 Rufus 视角约束。
+- [references/mcp-data-enrichment.md](./references/mcp-data-enrichment.md)
+  - Sorftime、卖家精灵等 Amazon 数据 MCP 的触发时机、数据映射、安全边界和模块联动方法。
 - [references/module-prompts.md](./references/module-prompts.md)
   - 8 个模块的适用场景、必填输入、输出契约、硬规则和提示词骨架。
 

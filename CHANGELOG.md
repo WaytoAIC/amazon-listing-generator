@@ -6,6 +6,16 @@ The format is intentionally simple and optimized for release notes and repositor
 
 ## [Unreleased]
 
+### Added
+
+- MCP-aware data enrichment guidance for Sorftime, 卖家精灵, and similar Amazon data sources
+- A dedicated reference for mapping keyword, competitor, review, and category data into Listing drafting
+
+### Changed
+
+- Updated the main skill workflow to prefer MCP data enrichment before drafting when connected
+- Expanded the intake schema and module rules to capture MCP-derived evidence safely
+
 ## [v1.0.0] - 2026-04-02
 
 First public release.
