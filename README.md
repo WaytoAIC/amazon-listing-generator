@@ -37,17 +37,17 @@ Way to AIC 不是教学，不是工具，而是一条所有电商人共同走的
 
 ```bash
 # Codex
-curl -fsSL https://raw.githubusercontent.com/restart2000/amazon-listing-generator/main/install.sh | bash -s -- --target codex
+curl -fsSL https://raw.githubusercontent.com/WaytoAIC/amazon-listing-generator/main/install.sh | bash -s -- --target codex
 ```
 
 ```bash
 # OpenClaw
-curl -fsSL https://raw.githubusercontent.com/restart2000/amazon-listing-generator/main/install.sh | bash -s -- --target openclaw
+curl -fsSL https://raw.githubusercontent.com/WaytoAIC/amazon-listing-generator/main/install.sh | bash -s -- --target openclaw
 ```
 
 ```bash
 # Version-pinned
-curl -fsSL https://raw.githubusercontent.com/restart2000/amazon-listing-generator/v1.0.0/install.sh | bash -s -- --target codex --ref v1.0.0
+curl -fsSL https://raw.githubusercontent.com/WaytoAIC/amazon-listing-generator/v1.0.0/install.sh | bash -s -- --target codex --ref v1.0.0
 ```
 
 复制即用。安装后重启 Codex / OpenClaw。
