@@ -1,0 +1,4 @@
+interface:
+  display_name: "亚马逊 Listing 生成器"
+  short_description: "生成亚马逊 Listing 全套内容、校验与优化工作流"
+  default_prompt: "Use $amazon-listing-generator 根据产品资料生成亚马逊 Listing 全套模块，包含标题、五点、Search Terms、图片需求、A+、视频脚本、Rufus 验证和 Listing 自查。"
