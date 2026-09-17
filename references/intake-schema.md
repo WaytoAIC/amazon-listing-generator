@@ -1,195 +1,126 @@
-# Intake Schema
+# 输入规范
 
-## 使用方式
+任何任务开始前，先把用户给的内容整理成下面这套字段。不要拿原始长文本或表格逐模块硬套。全 skill 只用这一套字段名。
 
-任何任务开始前，先把用户提供的内容归一化为下面这套字段。不要直接拿原始长文本或原始表格逐模块硬套。
-
-## 统一输入结构
+## 字段
 
 ```yaml
-task_mode: full_pack | single_module | optimize_existing
-requested_modules:
-  - 标题
-  - 五点
+task_mode: full_pack | single_module | optimize_existing | review_iterate
+requested_modules: []
+output_versions: single            # 或 two_versions，只在用户要求时用
+
+# 基础
 marketplace: US
 language: en-US
-product_name: ""
-brand: ""
+product_name: ""                   # 买家搜得懂的品类叫法，不是内部型号
+brand: ""                          # 可空，不要替用户补
+brand_registered: unknown          # yes | no | unknown，决定能不能做 A+
 category_term: ""
-audience_scenarios:
-  - ""
-usps:
-  - ""
-specs:
-  - ""
-compatibility:
-  supported:
-    - ""
-  unsupported:
-    - ""
-package_contents:
-  - ""
-materials:
-  - ""
-certifications:
-  - ""
-keyword_pool:
-  core:
-    - ""
-  secondary:
-    - ""
-  long_tail:
-    - ""
-semantic_buckets:
-  - 功能
-  - 场景
-  - 人群
-  - 材质
-  - 兼容
-keyword_allocation:
-  title:
-    - ""
-  item_highlights:
-    - ""
-  bullets_aplus:
-    - ""
-  search_terms:
-    - ""
-  unused:
-    - ""
-competitor_insights:
-  - ""
-review_insights:
-  pains:
-    - ""
-  expectations:
-    - ""
-  misuse:
-    - ""
-compliance_notes:
-  - ""
+variation_family:                  # 没有变体就留空
+  theme: []                        # 颜色、尺寸、件数……
+  children: []                     # 每个子体：名称 + 和兄弟不同的事实
+
+# 事实（只收用户资料里有的；拿不准的在后面标“待核实”）
+usps: []
+specs: []                          # 参数名 + 数值 + 单位 + 条件
+compatibility: {supported: [], unsupported: []}
+package_contents: []
+materials: []
+certifications: []
+attribute_template: []             # 用户类目模板里的属性名，可空
+
+# 人群与场景
+audience_scenarios: []
+not_suitable_for: []               # 不适合谁、什么情况下别买
+
+# 关键词与限制
+keyword_pool: {core: [], secondary: [], long_tail: []}   # 每条可带热度和出处
+semantic_buckets: []               # 功能、场景、人群、材质、兼容
+banned_terms: []                   # 能机器核对的禁用词
+compliance_notes: []               # 其余用文字写的限制
+
+# 市场
+competitor_insights: []            # 写“什么信息值得前置”，不写谁卖得好
+review_insights: {pains: [], expectations: [], misuse: []}   # 每条可带出处
+buyer_questions: []                # 用户实采的 Alexa 问答、竞品问答、客服高频问题
+market_positioning: {category: "", price_band: "", competitor_patterns: []}
+
+# 品牌与视觉
 brand_tone: ""
-image_constraints:
-  - 主图白底无字
-  - 移动端优先
+product_photos: []                 # 手上有哪些角度和素材
+visual_references: []              # 参考图、参考品牌、竞品链接
+image_constraints: []
+video_plan: {channel: "", duration: "", production: ""}   # production：AI 生成 | 实拍
+
+# 现有 Listing 与复盘
 existing_listing:
   title: ""
   item_highlights: ""
   bullets: []
   description: ""
   search_terms: ""
+  backend_attributes: []
   images_info: ""
   a_plus_content: ""
+performance_data: {}               # 曝光、点击率、转化率、退货和差评主题、上次改了什么
+iteration_log: []                  # 以前各轮的迭代记录
+
+# 数据来源
 data_sources:
-  user_materials:
-    - ""
-  marketplace_urls:
-    - ""
-  mcp:
-    sorftime:
-      enabled: false
-      own_product_data: []
-      keyword_data: []
-      competitor_data: []
-      review_data: []
-      category_data: []
-    sellersprite:
-      enabled: false
-      own_product_data: []
-      keyword_data: []
-      competitor_data: []
-      review_data: []
-      market_data: []
-market_positioning:
-  category: ""
-  price_band: ""
-  competitor_patterns:
-    - ""
-keyword_evidence:
-  core:
-    - ""
-  supporting:
-    - ""
-  long_tail:
-    - ""
-review_evidence:
-  pains:
-    - ""
-  expectations:
-    - ""
-  misuse:
-    - ""
+  user_materials: []
+  marketplace_urls: []
+  mcp: {sorftime: {enabled: false}, sellersprite: {enabled: false}}
 ```
 
-## 字段归一化规则
+过程产物由前置步骤生成，不要求用户填：`must_answer`（必答问题表）、`user_stories`（用户故事表）、`keyword_allocation`（title / item_highlights / bullets_aplus / search_terms / unused）、`backend_attributes`（后台属性表）。
 
-### 基础信息
+## 整理规则
 
-- `marketplace` 和 `language` 必须明确，不能只写“美国站”而不落到输出语言。
-- `product_name` 用用户搜索会理解的品类表达，不要只写内部型号。
-- `brand` 允许为空；若为空，不要擅自补品牌。
+- `marketplace` 和 `language` 必须明确，不能只写“美国站”。
+- 事实字段只放真实信息，不放营销口号。`compatibility` 必须分开写支持和不支持，“不确定”不能写成“支持”。
+- 每条事实默认“已确认”。数据工具抓来的、供应商口头说的、推断出来的，在后面标“待核实”；待核实的事实写进文案时，必须同时进「上架前待办」。
+- `banned_terms` 放能逐词核对的词；说不清词、只能描述的限制放 `compliance_notes`。
+- `existing_listing.title` 超长也照原样填，不要先行截短。用户只给了部分现有内容时，只填已知字段。
+- 竞品总结、评论洞察、关键词意图都是辅助判断，只能影响“先写什么、怎么排序”，不能变成新事实。
 
-### 事实字段
+## 各模块最低输入和前置步骤
 
-- `usps` 只保留真实卖点，不放营销口号。
-- `specs` 优先转成“参数名 + 数值 + 单位 + 条件”的形式。
-- `compatibility` 必须区分支持和不支持，避免把“不确定”写成“支持”。
-- `package_contents` 只列实际随包装附带内容。
-- `certifications` 只保留已确认的证据型信息。
+| 模块 | 缺了就不能做的输入 | 需要先做的准备步骤 |
+|---|---|---|
+| 必答问题表 | product_name、usps、specs | — |
+| 用户故事表 | usps、audience_scenarios | 必答问题表 |
+| 关键词四层分配 | product_name、keyword_pool、usps、specs | — |
+| 后台属性表 | specs、materials、compatibility、package_contents | — |
+| 标题、Item Highlights | marketplace、language、product_name、usps、specs | 关键词四层分配 |
+| 五点、商品描述 | language、audience_scenarios、usps、specs | 必答问题表、用户故事表、关键词四层分配 |
+| Search Terms | language、marketplace、keyword_pool | 关键词四层分配；已写好或用户提供的标题、Item Highlights、五点 |
+| 图片需求单 | marketplace、product_name、usps、specs | 必答问题表、用户故事表 |
+| A+ 需求单 | 同上，且 brand_registered 不是 no | 必答问题表、用户故事表 |
+| 视频分镜表 | product_name、usps、product_photos | 必答问题表、用户故事表 |
+| Alexa 问答覆盖验证 | 被检查的文案 | 必答问题表（没有就先建） |
+| 合规检查 | 被检查的文案 | — |
 
-### 洞察字段
+单模块任务只补做表里列出的准备步骤，不把整条流水线跑一遍。
 
-- `competitor_insights` 写“什么信息值得前置”，不要只写竞品卖得好不好。
-- `review_insights` 按痛点、期待、误用拆分，便于直接映射到五点、图片和 Rufus 问答。
-- `semantic_buckets` 用于 Search Terms 和后 3 条五点的语义补位。
-- `keyword_allocation` 是关键词四层分配的结果：核心产品词进 `title`，功能属性和材质词进 `item_highlights`，使用场景和购买理由词进 `bullets_aplus`，长尾词和同义词进 `search_terms`。禁用词、品牌或竞品品牌部分，以及资料里找不到依据的宣称类词进 `unused`，并写明原因。一条关键词只进一个位置，`unused` 里的词不进任何位置；用户没给时由前置步骤生成，不要求用户自己填。
-- `market_positioning` 用于判断产品要站在哪个价格带、风格带和竞品带上说话。
-- `keyword_evidence` 用于存放 Sorftime、卖家精灵等 MCP 跑出来的关键词证据，用户自带的搜索量或热度数据也放这里，不要和最终前台文案混写。
-- `review_evidence` 用于存放评论抓取后的原始问题类型，便于回溯结论依据。
+## 做图片、A+、视频前先清点六类输入
 
-### MCP 数据字段
+缺哪类就提醒用户会有什么后果，不因此停工。
 
-- `data_sources.mcp.sorftime` 和 `data_sources.mcp.sellersprite` 只记录“从哪里拿到什么类型的数据”，不要求逐条抄工具原始返回。
-- `own_product_data` 可用于补事实，但如果与用户提供的官方资料冲突，必须先标冲突。
-- `keyword_data`、`competitor_data`、`review_data`、`category_data`、`market_data` 属于辅助证据，主要用于排序、筛词和找缺口。
-- 如果系统里有多个 Amazon 数据 MCP，可组合使用，但要避免把同一类结论当作多个独立事实重复叠加。
+| 输入 | 至少要有 | 缺了会怎样 |
+|---|---|---|
+| 产品素材 product_photos | 白底图、实拍图、配件图，最好有多个角度 | 主体不稳，换个角度就画错 |
+| 产品信息 | 标题、五点、材质、参数、场景、人群 | 出图普通，卖点不聚焦 |
+| 品牌调性 brand_tone | 主色、风格、语气 | 没有品牌感；缺失时见 brand-os.md |
+| 参考体系 visual_references | 参考图、参考品牌、竞品链接 | 知道不对，但说不清哪不对 |
+| 用户故事 | 用户故事表 | 只能摆产品，没有代入感 |
+| 输出约束 image_constraints | 尺寸、比例、平台规则 | 返工，或上线后不合规 |
 
-### 现有 Listing
+## 缺信息怎么办
 
-- 只有在优化已有 Listing 时才填 `existing_listing`。
-- 现有标题超过 75 字符时照原样填入，不要先行截短；拆分交给标题和 Item Highlights 模块处理。
-- 如果用户只给了部分现有内容，只填写已知字段，不要脑补其余字段。
+- 不卡住当前模块的，注明“信息不足，已按现有事实保守输出”，继续做，并记进「上架前待办」。
+- 会让核心结论失真的，只追问最少的字段。追问顺序：站点和语言 → 产品是什么 → 关键参数 → 兼容和限制 → 使用场景 → 关键词池。
+- 凡是买家会问“具体是多少”的参数，都要明确到数字。
 
-## 模块阻塞项
+## 旧叫法对照
 
-| 模块 | 最低阻塞输入 |
-|---|---|
-| 关键词四层分配（前置步骤） | product_name、keyword_pool、usps、specs |
-| 标题 | marketplace、language、product_name、usps、specs、keyword_pool |
-| Item Highlights | marketplace、language、已达标的标题、usps、specs、keyword_pool |
-| 五点 | language、audience_scenarios、usps、specs |
-| Search Terms | language、marketplace、keyword_pool、used_terms 或现有标题/Item Highlights/五点 |
-| 主附图设计需求 | marketplace、product_name、usps_specs、brand_tone 或产品调性 |
-| A+设计需求 | marketplace、product_name、brand、usps、audience_scenarios |
-| 视频脚本 | product_name、标题或核心卖点、五点或场景信息 |
-| Rufus问答验证 | title、bullets、description 或等价前台文本、backend_terms、usps_specs |
-| Listing自查 | 至少要有被检查模块的现有内容 |
-
-## 缺失信息处理
-
-- 如果缺失项不阻塞当前模块，用“信息不足，已按现有事实保守输出”继续。
-- 如果缺失项会导致核心结论失真，只追问最少量字段。
-- 追问优先级：
-  1. 站点 / 语言
-  2. 产品是什么
-  3. 关键参数
-  4. 兼容 / 限制
-  5. 用户场景
-  6. 关键词池
-
-## 事实与推断分离
-
-- 用户原始资料、官方规格、包装清单、认证信息属于事实。
-- 竞品总结、评论洞察、关键词意图属于推断性辅助信息。
-- MCP 抓到的商品详情、关键词结果、评论结果和市场数据默认属于“外部证据”，除非用户确认，否则不要自动升级成前台事实。
-- 最终前台文案只可以把推断用于“表达排序”和“卖点前置”，不能把推断写成新事实。
+用户沿用旧说法时照常受理：Rufus 问答验证 = Alexa 问答覆盖验证；Listing 自查 = 合规检查；视频脚本 = 视频分镜表；主附图设计需求 = 图片需求单；A+设计需求 = A+ 需求单；“9 模块”“8 模块”“全套” = 全套生成。
