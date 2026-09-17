@@ -6,7 +6,7 @@ The format is intentionally simple and optimized for release notes and repositor
 
 ## [Unreleased]
 
-## [v1.1.0] - 2026-09-17
+## [v1.1.0] - 2026-09-18
 
 Aligns the skill with Amazon's 2026 title rules: titles of 75 characters or fewer and the new Item Highlights field. Also ships the MCP-aware enrichment work that had not been released yet.
 
