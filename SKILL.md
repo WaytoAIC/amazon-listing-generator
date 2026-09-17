@@ -1,80 +1,65 @@
 ---
 name: amazon-listing-generator
-description: 生成和优化亚马逊 Listing 全套内容的内部团队技能，已适配 2026 标题新规（标题不超过 75 字符，新增 Item Highlights 字段）。用于根据产品资料、竞品结论、评论洞察和关键词池，先做关键词四层分配，再生成或重写标题、Item Highlights、五点、Search Terms、主附图 Brief、A+ Brief、视频脚本、Rufus 问答验证和 Listing 自查；也用于把超长旧标题拆成合规标题加 Item Highlights、移动端优先优化、SEO 与 Rufus 协同改写、已有 Listing 审核和局部重写。若系统已接入 Sorftime、卖家精灵等 Amazon 数据 MCP，应先做数据补强，再起草 Listing。
+description: 生成和优化亚马逊 Listing 全套内容。先定买家必答问题、用户故事、关键词分配和后台属性，再写标题（不超过 75 字符）、Item Highlights、五点、商品描述、Search Terms，出图片、A+、视频需求单，最后做 Alexa 购物助手（原 Rufus）问答覆盖验证和带脚本的合规检查。也用于只做单个模块、把超长旧标题拆成合规标题加 Item Highlights、审核和改写已有 Listing、按上线数据复盘迭代。接入 Sorftime、卖家精灵等 Amazon 数据 MCP 时先做数据补强。
+metadata:
+  version: "2.0.0"
 ---
 
 # Amazon Listing Generator
 
-## 概述
+一句话：针对特定场景 × 特定人群 × 特定需求，讲清楚这个产品给出了什么解决办法。Listing 是买家和 Alexa 购物助手（原 Rufus）回答问题用的资料库，写清楚的才会被用上。协作说明用中文，面向亚马逊前台的文案按目标站点语言输出。
 
-先把零散产品资料整理成统一字段，再按任务选择全套生成、单模块生成或已有 Listing 优化。协作说明默认用中文，面向亚马逊前台的最终文案必须按目标站点语言输出。
+## 先判断任务
 
-## 使用顺序
+| 用户要什么 | 模式 | 怎么走 |
+|---|---|---|
+| “整套”“完整产出”“一键生成”“9 模块” | 全套生成 | 按下面的流水线从头走到尾 |
+| 只点名某个模块 | 单模块 | 查 references/intake-schema.md 的“最低输入和前置步骤”表，只补做表里列出的准备步骤，只产出点名的模块 |
+| 给了现有 Listing，要优化、改写、审查 | 改旧稿 | 读 references/existing-listing.md |
+| 给了上线后的数据，要复盘、迭代 | 复盘迭代 | 读 references/existing-listing.md |
 
-1. 先读 [references/intake-schema.md](./references/intake-schema.md)，把用户提供的信息整理成统一输入结构。
-2. 再读 [references/workflow.md](./references/workflow.md)，确认移动端优先、双读者、Rufus 明示和完整生成顺序。
-3. 如果系统可用 Sorftime、卖家精灵或其他 Amazon 数据 MCP，读 [references/mcp-data-enrichment.md](./references/mcp-data-enrichment.md)，先补强关键词、竞品、评论、类目和兼容风险信息。
-4. 最后只读取 [references/module-prompts.md](./references/module-prompts.md) 中与当前任务有关的模块章节，不要把全部模块一起加载。
+所有模式都先读 references/intake-schema.md 整理输入。资料明显不够时读 references/workflow.md。系统接了 Sorftime、卖家精灵等数据工具时，读 references/mcp-data-enrichment.md 先补强。
 
-## 任务判断
+## 流水线
 
-- 如果用户要“整套 Listing”“完整产出”“一键生成”，走全套生成模式。
-- 如果用户只点名标题、Item Highlights、五点、Search Terms、主图需求、A+、视频脚本、Rufus 验证或 Listing 自查，走单模块模式。
-- 如果用户提供已有 Listing 草稿，且目标是优化、改写、审查或补齐，先做缺口识别，再只处理被要求的模块。
+每一步只读它自己的文件，做完再读下一个。平台的数字（长度、条数、字节、像素）只在 references/platform-rules.md，按需读对应小节。
 
-## 执行规则
+| 段 | 步骤 | 读哪个文件 | 什么时候跳过 |
+|---|---|---|---|
+| 准备 | 买家必答问题表 | references/modules/00-must-answer-questions.md | — |
+| 准备 | 卖点 → 用户故事 | references/modules/01-user-stories.md | 只做标题、Item Highlights、Search Terms 时 |
+| 准备 | 关键词四层分配 | references/modules/02-keyword-allocation.md | 任务不涉及文字模块时 |
+| 准备 | 后台属性表 | references/modules/03-backend-attributes.md | 单模块任务且用户没要 |
+| 文字 | 标题 + Item Highlights | references/modules/10-title-highlights.md | — |
+| 文字 | 五点 + 商品描述 | references/modules/11-bullets-description.md | 描述：能做 A+ 且用户没要时不写 |
+| 文字 | Search Terms | references/modules/12-search-terms.md | — |
+| 视觉 | 图片需求单 | references/modules/20-image-brief.md | — |
+| 视觉 | A+ 需求单 | references/modules/21-aplus-brief.md | brand_registered 为 no |
+| 视觉 | 视频分镜表 | references/modules/22-video-shotlist.md | — |
+| 检查 | Alexa 问答覆盖验证 | references/modules/30-alexa-coverage-check.md | — |
+| 检查 | 合规检查（跑脚本） | references/modules/31-compliance-check.md | — |
 
-- 全套生成固定按以下顺序输出：
-  0. 关键词四层分配（前置步骤，不算模块）
-  1. 标题
-  2. Item Highlights
-  3. 五点
-  4. Search Terms
-  5. 主附图设计需求
-  6. A+设计需求
-  7. 视频脚本
-  8. Rufus问答验证
-  9. Listing自查
-- 先分配、再写作：只要任务涉及标题、Item Highlights、五点或 Search Terms，先做关键词四层分配。核心产品词进标题，功能属性和材质词进 Item Highlights，使用场景和购买理由词进五点与 A+，长尾词和同义词进 Search Terms；一条关键词只进一个位置，资料里找不到依据的宣称类词标“不用”。关键词分配只管搜索词埋在哪，不限制五点写材质、参数这类事实。
-- 标题不超过 75 字符（含空格、标点和品牌名），作用是定义商品身份，回答“这是什么产品”，不是堆关键词；放不下的属性交给 Item Highlights。
-- Item Highlights 不超过 125 字符，用逗号分隔的短语，不重复标题里已有的词；标题先达标才能添加。
-- 单模块模式只输出用户点名的模块，不顺带生成其他模块；点名的是标题、Item Highlights、五点或 Search Terms 时，把关键词分配表作为依据一并附上。
-- 已有 Listing 优化模式先做缺口识别，再只重写用户指定模块；如果未指定模块，优先给出审查结论和改写优先级。缺口识别必须检查标题是否超过 75 字符、有没有 Item Highlights。
-- 如果系统已接入 Sorftime、卖家精灵等 MCP，优先在起草前补强以下信息：关键词池、竞品前置信息、评论痛点、兼容风险、类目定位和市场词路。
-- Search Terms 必须依赖已生成或已提供的标题、Item Highlights 与五点，确保正确排除 `used_terms`。
-- Rufus 验证只能基于 Listing 中明确写出的文本、参数和属性回答，不能用常识补完。
-- 自查模块必须输出结构化检查表，覆盖标题、Item Highlights、图片、五点、描述、后台关键词、A+ 与整体一致性，并按数值清单逐项核对长度。
-- 所有 MCP 结果默认只用于内部判断、排序和补充证据，不能把销量、BSR、PPC、评论比例或竞品数据直接写成面向消费者的前台宣称。
+按需读：有变体读 references/variation-family.md；要做视觉模块而没有品牌调性，读 references/brand-os.md。
 
-## 缺失信息处理
+## 交付
 
-- 缺失信息时，先判断是否阻塞当前模块。
-- 只追问阻塞项，不要做宽泛访谈。
-- 凡是用户可能会问“具体是多少”的参数，都应要求明确化。
-- 绝不编造规格、兼容范围、认证、保修、售后、材质、安全结论或任何合规声明。
-- 用户提供的事实优先于常见市场写法；如果事实彼此冲突，先指出冲突再继续。
+- 把 assets/listing-package-template.md 复制到用户的工作目录再填；不改各级标题和表头；任务没涉及的小节整节删掉。边做边写，不要攒到最后。
+- 先用中文说思路、缺口和风险，再给目标语言的文案；用户只要最终文案时，只给交付文件。
+- 用户要两个版本时（output_versions 为 two_versions）：搜索覆盖版给新品期，关键词覆盖优先；转化表达版给成熟链接，可读性和说服力优先。只有标题、Item Highlights、五点、Search Terms 不同，第二版另存一个文件，其余表和需求单共用。
 
-## 输出要求
+## 检查和回头改
 
-- 默认先用中文说明思路、缺口和风险，再输出目标站点语言的前台文案或结构化 Brief。
-- 如果用户明确指定只要最终文案，则只输出目标产物。
-- 凡是输出标题、Item Highlights 或 Search Terms，必须附上实际数出来的长度（字符数或字节数）。有代码工具时用代码数；没有时逐段累加核对，并注明是人工估算。
-- 如果用户给的是已有 Listing，先给差距判断，再输出改写结果。
-- 如果用户要求图片、A+、视频模块，输出必须足够结构化，能直接给设计师或视频团队使用。
+- 问答覆盖验证发现“有依据却没覆盖”的，回去补写一次。
+- 检查脚本永远最后跑。不通过就改了重跑，最多两轮，之后如实报告还差什么。脚本通过后不再改文案。
+- 脚本是 `scripts/check_listing.py`，路径从本文件所在目录算起。没有 python 时人工核对，并注明“人工估算”。
 
-## 参考文件
+## 红线
 
-- [references/intake-schema.md](./references/intake-schema.md)
-  - 统一输入字段、字段归一化规则、各模块阻塞项判断。
-- [references/workflow.md](./references/workflow.md)
-  - 好 Listing 的判断标准、SOP 流程、移动端优先和 Rufus 视角约束。
-- [references/mcp-data-enrichment.md](./references/mcp-data-enrichment.md)
-  - Sorftime、卖家精灵等 Amazon 数据 MCP 的触发时机、数据映射、安全边界和模块联动方法。
-- [references/module-prompts.md](./references/module-prompts.md)
-  - 关键词四层分配这一前置步骤，以及 9 个模块的适用场景、必填输入、输出契约、硬规则和提示词骨架。
-
-## 质量底线
-
-- 用户可读性优先于机械埋词，尤其是标题、前两条五点、主图与前 3 张图、A+ 首屏。
-- 前台表述、后台属性和 Rufus 可回答信息必须一致。
-- 所有结论都应来自明确事实、竞品提炼、评论洞察或关键词语义，不要用空泛形容词堆砌。
+- 不编造：规格、兼容范围、认证、保修、材质、安全结论，资料里没有的一个字不写；没依据的买家问题不回答，也不暗示。
+- 用户给的事实优先；事实互相冲突时先指出来。
+- 数据工具来的销量、排名、点击率、评论比例只用于内部判断，不进买家可见的文案。
+- 平台数字只认 references/platform-rules.md；今天距它的核对日期超过 6 个月，先提醒用户规则可能已变。
+- 图上出现的卖点，文案里要有，后台属性里要填。
+- 图片、A+、视频只出需求单和提示词，不调用作图或视频工具。
+- 复盘迭代一轮最多改 2 个模块。
+- 缺信息只追问卡住当前模块的项，不做宽泛访谈。
