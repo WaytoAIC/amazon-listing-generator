@@ -12,6 +12,7 @@ marketplace、language、product_name、brand、usps、specs、variation_family�
 - 结构：品牌（如有）+ 核心产品名 + 关键属性；无品牌时直接以品类主词开头。
 - 要埋的搜索词只用分给标题的那部分；品牌、变体属性、关键参数照常取自事实。
 - 放不下时的取舍：先保品牌和核心产品名，再保区分变体的一两个属性，最后才是其余分给标题的词；挪出去的按热度从低到高进 Item Highlights。
+- 没有变体时，颜色不算必须保的属性：放得下就放标题，放不下放 Item Highlights。
 - 不堆砌型号；可读性优先于关键词覆盖。
 - 站点或品类不受标题长度上限约束时（见平台规则「站点与品类例外」），按该类目风格指南写，仍以简洁为先。
 
@@ -30,4 +31,4 @@ marketplace、language、product_name、brand、usps、specs、variation_family�
 
 ## 产出
 
-交付模板的 `### Title` 和 `### Item Highlights`，各一行。长度由检查脚本数，不手写字符数。
+交付模板的 `### Title` 和 `### Item Highlights`，各一行。长度由检查脚本数，不在文案行里手写字符数；没有 python 时按 31-compliance-check.md 的办法人工估算。

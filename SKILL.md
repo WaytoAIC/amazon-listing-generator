@@ -18,18 +18,18 @@ metadata:
 | 给了现有 Listing，要优化、改写、审查 | 改旧稿 | 读 references/existing-listing.md |
 | 给了上线后的数据，要复盘、迭代 | 复盘迭代 | 读 references/existing-listing.md |
 
-所有模式都先读 references/intake-schema.md 整理输入。资料明显不够时读 references/workflow.md。系统接了 Sorftime、卖家精灵等数据工具时，读 references/mcp-data-enrichment.md 先补强。
+所有模式都先读 references/intake-schema.md 整理输入。资料明显不够时读 references/workflow.md。系统接了 Sorftime、卖家精灵等数据工具，且用户给的关键词、竞品或评论资料不够时，读 references/mcp-data-enrichment.md 先补强。
 
 ## 流水线
 
-每一步只读它自己的文件，做完再读下一个。平台的数字（长度、条数、字节、像素）只在 references/platform-rules.md，按需读对应小节。
+下表是全套生成的顺序。单模块任务做哪些准备步骤，以 references/intake-schema.md 的表为准，不看这里的最后一列。每一步只读它自己的文件，做完再读下一个。平台的数字（长度、条数、字节、像素）只在 references/platform-rules.md，按需读对应小节。
 
-| 段 | 步骤 | 读哪个文件 | 什么时候跳过 |
+| 段 | 步骤 | 读哪个文件 | 全套生成时什么情况跳过 |
 |---|---|---|---|
 | 准备 | 买家必答问题表 | references/modules/00-must-answer-questions.md | — |
-| 准备 | 卖点 → 用户故事 | references/modules/01-user-stories.md | 只做标题、Item Highlights、Search Terms 时 |
-| 准备 | 关键词四层分配 | references/modules/02-keyword-allocation.md | 任务不涉及文字模块时 |
-| 准备 | 后台属性表 | references/modules/03-backend-attributes.md | 单模块任务且用户没要 |
+| 准备 | 卖点 → 用户故事 | references/modules/01-user-stories.md | — |
+| 准备 | 关键词四层分配 | references/modules/02-keyword-allocation.md | — |
+| 准备 | 后台属性表 | references/modules/03-backend-attributes.md | — |
 | 文字 | 标题 + Item Highlights | references/modules/10-title-highlights.md | — |
 | 文字 | 五点 + 商品描述 | references/modules/11-bullets-description.md | 描述：能做 A+ 且用户没要时不写 |
 | 文字 | Search Terms | references/modules/12-search-terms.md | — |
@@ -44,11 +44,13 @@ metadata:
 ## 交付
 
 - 把 assets/listing-package-template.md 复制到用户的工作目录再填；不改各级标题和表头；任务没涉及的小节整节删掉。边做边写，不要攒到最后。
-- 先用中文说思路、缺口和风险，再给目标语言的文案；用户只要最终文案时，只给交付文件。
+- 交付文件命名：`listing-<商品简称>-<站点>.md`。
+- 先用中文说思路、缺口和风险，再给目标语言的文案。用户说只要最终文案时：该做的准备照做，交付文件只留文案小节、「上架前待办」和检查结果，其余表格不给。
 - 用户要两个版本时（output_versions 为 two_versions）：搜索覆盖版给新品期，关键词覆盖优先；转化表达版给成熟链接，可读性和说服力优先。只有标题、Item Highlights、五点、Search Terms 不同，第二版另存一个文件，其余表和需求单共用。
 
 ## 检查和回头改
 
+- 单模块任务：合规检查照做，脚本只查文件里有的小节；Alexa 问答覆盖验证只在任务包含五点、描述或 A+，或用户点名时才做。
 - 问答覆盖验证发现“有依据却没覆盖”的，回去补写一次。
 - 检查脚本永远最后跑。不通过就改了重跑，最多两轮，之后如实报告还差什么。脚本通过后不再改文案。
 - 脚本是 `scripts/check_listing.py`，路径从本文件所在目录算起。没有 python 时人工核对，并注明“人工估算”。
