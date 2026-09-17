@@ -46,6 +46,17 @@ semantic_buckets:
   - 人群
   - 材质
   - 兼容
+keyword_allocation:
+  title:
+    - ""
+  item_highlights:
+    - ""
+  bullets_aplus:
+    - ""
+  search_terms:
+    - ""
+  unused:
+    - ""
 competitor_insights:
   - ""
 review_insights:
@@ -63,6 +74,7 @@ image_constraints:
   - 移动端优先
 existing_listing:
   title: ""
+  item_highlights: ""
   bullets: []
   description: ""
   search_terms: ""
@@ -130,8 +142,9 @@ review_evidence:
 - `competitor_insights` 写“什么信息值得前置”，不要只写竞品卖得好不好。
 - `review_insights` 按痛点、期待、误用拆分，便于直接映射到五点、图片和 Rufus 问答。
 - `semantic_buckets` 用于 Search Terms 和后 3 条五点的语义补位。
+- `keyword_allocation` 是关键词四层分配的结果：核心产品词进 `title`，功能属性和材质词进 `item_highlights`，使用场景和购买理由词进 `bullets_aplus`，长尾词和同义词进 `search_terms`。禁用词、品牌或竞品品牌部分，以及资料里找不到依据的宣称类词进 `unused`，并写明原因。一条关键词只进一个位置，`unused` 里的词不进任何位置；用户没给时由前置步骤生成，不要求用户自己填。
 - `market_positioning` 用于判断产品要站在哪个价格带、风格带和竞品带上说话。
-- `keyword_evidence` 用于存放 Sorftime、卖家精灵等 MCP 跑出来的关键词证据，不要和最终前台文案混写。
+- `keyword_evidence` 用于存放 Sorftime、卖家精灵等 MCP 跑出来的关键词证据，用户自带的搜索量或热度数据也放这里，不要和最终前台文案混写。
 - `review_evidence` 用于存放评论抓取后的原始问题类型，便于回溯结论依据。
 
 ### MCP 数据字段
@@ -144,15 +157,18 @@ review_evidence:
 ### 现有 Listing
 
 - 只有在优化已有 Listing 时才填 `existing_listing`。
+- 现有标题超过 75 字符时照原样填入，不要先行截短；拆分交给标题和 Item Highlights 模块处理。
 - 如果用户只给了部分现有内容，只填写已知字段，不要脑补其余字段。
 
 ## 模块阻塞项
 
 | 模块 | 最低阻塞输入 |
 |---|---|
+| 关键词四层分配（前置步骤） | product_name、keyword_pool、usps、specs |
 | 标题 | marketplace、language、product_name、usps、specs、keyword_pool |
+| Item Highlights | marketplace、language、已达标的标题、usps、specs、keyword_pool |
 | 五点 | language、audience_scenarios、usps、specs |
-| Search Terms | language、marketplace、keyword_pool、used_terms 或现有标题/五点 |
+| Search Terms | language、marketplace、keyword_pool、used_terms 或现有标题/Item Highlights/五点 |
 | 主附图设计需求 | marketplace、product_name、usps_specs、brand_tone 或产品调性 |
 | A+设计需求 | marketplace、product_name、brand、usps、audience_scenarios |
 | 视频脚本 | product_name、标题或核心卖点、五点或场景信息 |
