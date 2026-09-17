@@ -27,7 +27,7 @@ product_name、usps、specs、product_photos、video_plan、brand_tone、must_an
 
 长视频必须分镜，逐镜头生成，不要让模型一次处理多个复杂场景。
 
-## 反虚构
+## 待核实的功能必须实拍
 
 画面“证明”了某个功能（如倒置不漏）而该功能还待核实：这个镜头必须实拍，不能用 AI 生成的画面投放，并记进「上架前待办」（核实）。
 
