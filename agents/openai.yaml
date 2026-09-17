@@ -1,4 +1,4 @@
 interface:
   display_name: "亚马逊 Listing 生成器"
-  short_description: "生成亚马逊 Listing 全套内容、校验与优化工作流"
-  default_prompt: "Use $amazon-listing-generator 根据产品资料生成亚马逊 Listing 全套 9 个模块：先做关键词四层分配，再输出标题（不超过 75 字符）、Item Highlights、五点、Search Terms、图片需求、A+、视频脚本、Rufus 验证和 Listing 自查。"
+  short_description: "生成亚马逊 Listing 全套内容，带必答问题验证和脚本检查"
+  default_prompt: "Use $amazon-listing-generator 根据这份产品资料生成整套亚马逊 Listing：先定买家必答问题和关键词分配，再写文案和需求单，最后跑检查脚本。"

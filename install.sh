@@ -131,12 +131,12 @@ mkdir -p "$DEST_ROOT"
 
 if command -v rsync >/dev/null 2>&1; then
   mkdir -p "$INSTALL_DIR"
-  rsync -a --delete --exclude '.git' --exclude '.DS_Store' "$SOURCE_DIR/" "$INSTALL_DIR/"
+  rsync -a --delete --exclude '.git' --exclude '.DS_Store' --exclude 'tests' --exclude '.claude' --exclude '.github' "$SOURCE_DIR/" "$INSTALL_DIR/"
 else
   rm -rf "$INSTALL_DIR"
   mkdir -p "$INSTALL_DIR"
   cp -R "$SOURCE_DIR"/. "$INSTALL_DIR"/
-  rm -rf "$INSTALL_DIR/.git"
+  rm -rf "$INSTALL_DIR/.git" "$INSTALL_DIR/tests" "$INSTALL_DIR/.claude" "$INSTALL_DIR/.github"
   rm -f "$INSTALL_DIR/.DS_Store"
 fi
 

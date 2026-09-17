@@ -6,6 +6,40 @@ The format is intentionally simple and optimized for release notes and repositor
 
 ## [Unreleased]
 
+## [v2.0.0] - not released yet
+
+Rebuilds the skill from a set of prompts into a pipeline with inputs fixed before writing, a script check after writing, and one round of rework in between.
+
+### Added
+
+- Must-answer buyer question table, built before writing and verified after writing; questions with no supporting facts are neither answered nor implied and go to a pre-launch to-do list
+- Backend attribute sheet, filled before the copy so front-end and back-end values agree
+- Selling point to user story table shared by bullets, description, images, A+, and video
+- Product description module, written only when there is no A+ or on request
+- `scripts/check_listing.py`: standard-library checker for lengths, banned characters, repetition, placeholders, and table completeness; it writes its own result section with a copy fingerprint
+- `assets/listing-package-template.md`: the fixed deliverable template the checker parses
+- `references/platform-rules.md`: single source of Amazon numbers, each rule marked hard, recommended, or practice, with its help-page source and verification date
+- Variation-family rules with a per-child difference table that the checker validates
+- Review-and-iterate mode: locate the funnel stage, change at most two modules per round, log hypothesis and review date
+- Two-version output on request: a search-coverage version and a conversion version
+- Brand tone fallback (compact Brand OS card) for visual tasks without a brand tone
+- Newly covered Amazon rules: Alexa for Shopping, AI-generated people metadata tag, A+ and video content rules, description HTML rule, narrowed review sharing across variations
+
+### Changed
+
+- Rufus Q&A validation is now Alexa question coverage verification and runs against the must-answer table; old names are still accepted
+- Listing self-check is now the compliance check: the script runs first and always last, human judgment covers only what the script cannot decide
+- Image, A+, and video briefs upgraded: one job per image, explicit forbidden elements, an English image-generation prompt per slot, a 6–9 shot list with three consistency rules; briefs and prompts only, no tool calls
+- Bullets follow Amazon's recommended format: header, colon, description; no end punctuation; at least one statement of who the product suits or does not suit
+- One field vocabulary across all files (`marketplace`, `bullets`, `search_terms`, `banned_terms`, and so on)
+- Module instructions split into twelve files under `references/modules/`; the entry file routes to one file per step
+- `install.sh` no longer installs `tests/`, `.claude/`, or `.github/`
+
+### Removed
+
+- `references/module-prompts.md` and all prompt skeletons; the agent follows the module rules directly
+- Amazon numbers from every file except `references/platform-rules.md` and the checker
+
 ## [v1.1.0] - 2026-09-18
 
 Aligns the skill with Amazon's 2026 title rules: titles of 75 characters or fewer and the new Item Highlights field. Also ships the MCP-aware enrichment work that had not been released yet.

@@ -47,77 +47,89 @@ curl -fsSL https://raw.githubusercontent.com/WaytoAIC/amazon-listing-generator/m
 
 ```bash
 # Version-pinned
-curl -fsSL https://raw.githubusercontent.com/WaytoAIC/amazon-listing-generator/v1.1.0/install.sh | bash -s -- --target codex --ref v1.1.0
+curl -fsSL https://raw.githubusercontent.com/WaytoAIC/amazon-listing-generator/v2.0.0/install.sh | bash -s -- --target codex --ref v2.0.0
 ```
 
 复制即用。安装后重启 Codex / OpenClaw。
 
 ---
 
-一个面向亚马逊卖家的 Listing 生成 skill，用于把产品资料、竞品结论、评论洞察和关键词池整理成完整的 Amazon Listing 产出包。
+一个面向亚马逊卖家的 Listing 生成 skill：把产品资料、竞品结论、评论洞察和关键词池，做成一份能直接上架、经得起买家和 Alexa 购物助手（原 Rufus）追问的 Listing 交付包。
 
-它默认支持完整 9 模块一键生成，也支持只生成单个模块，以及基于已有 Listing 草稿做审查和局部重写。
-如果系统已经接入 Sorftime、卖家精灵等 Amazon 数据 MCP，这个 skill 会优先利用它们补强关键词、竞品、评论和类目数据，再进入 Listing 起草。
+支持整套一键生成、只做单个模块、改旧稿、按上线数据复盘迭代。
+如果系统已经接入 Sorftime、卖家精灵等 Amazon 数据 MCP，会先补强关键词、竞品、评论和类目数据，再进入起草。
 
 ## 中文
 
-### 已适配亚马逊 2026 标题新规（v1.1.0）
+### v2.0 有什么不一样
 
-- 2026-07-27 起，除媒体类外，标题不得超过 75 字符（含空格）；超长标题会被亚马逊 AI 逐步自动改写，品牌备案卖家有 14 天审阅期
-- 新增 Item Highlights 字段：最多 125 字符，逗号分隔的短语，显示在标题下方，可被搜索
-- 这个 skill 的对应做法：标题只负责说清“这是什么产品”，放不下的材质和功能属性交给 Item Highlights；动笔前先做关键词四层分配，一条关键词只进一个位置
-- 规则会变，拿不准时以亚马逊卖家后台帮助页的最新内容为准
+- 先定问题再动笔：写之前先列出买家必答问题，写完逐条验证答上了没有；没依据的问题不回答、不暗示，记进待办
+- 补上后台属性表：先把准确数值定下来，文案照着写，前台和后台不打架
+- 卖点先翻成用户故事：五点、图片、A+、视频共用一张表，不再各写各的
+- 图片、A+、视频需求单升级：每张图只担一个任务、写明禁入元素、配英文生图提示词；视频给分镜表和一致性规则。只出需求单和提示词，不绑定任何作图或视频工具
+- 长度交给脚本数：`scripts/check_listing.py` 检查长度、禁用字符、重复和表格是否齐全，检查结果由脚本写进交付文件
+- 平台规则集中在一个文件：每条标明是硬性、建议还是经验，附帮助页出处和核对日期
+- 新增变体族规则、复盘迭代模式（一轮最多改 2 个模块）、搜索覆盖版和转化表达版两个版本、缺品牌调性时的兜底
 
-### 这个 skill 会帮你做什么
+### 已适配的亚马逊 2026 规则
 
-- 生成标题、Item Highlights、五点、Search Terms、主附图 Brief、A+ Brief、视频脚本、Rufus 问答验证和 Listing 自查
-- 动笔前先做关键词四层分配：核心产品词进标题，功能属性和材质词进 Item Highlights，使用场景和购买理由词进五点与 A+，长尾词和同义词进 Search Terms
-- 把超过 75 字符的旧标题拆成“合规标题 + Item Highlights”
-- 把零散产品信息先归一化，再按模块顺序输出，避免漏字段和模块间冲突
-- 兼顾前台转化、移动端可读性、SEO 覆盖和 Rufus 可回答性
-- 在已有 Listing 场景下，先识别事实缺口、风险和改写优先级，再只改指定模块
-- 如果接了 Sorftime、卖家精灵等 MCP，会先补关键词证据、竞品结构、评论痛点和类目定位
+- 2026-07-27 起，除媒体类外，标题不得超过 75 字符（含空格）；新增 Item Highlights 字段，最多 125 字符
+- 2026-05-13 起，Rufus 改名 Alexa for Shopping
+- 含写实风格 AI 生成人物的图片和视频，上传前必须打元数据标签
+- 2026-02-12 起，变体之间的评论共享范围收窄
+- 规则核对日期 2026-09-18，出处见 [references/platform-rules.md](./references/platform-rules.md)。规则会变，拿不准时以亚马逊卖家后台帮助页的最新内容为准
+
+### 流程
+
+1. 准备：买家必答问题表 → 卖点翻成用户故事 → 关键词四层分配 → 后台属性表
+2. 文字：标题和 Item Highlights → 五点和商品描述 → Search Terms
+3. 视觉：图片需求单 → A+ 需求单 → 视频分镜表
+4. 检查：Alexa 问答覆盖验证 → 合规检查（脚本最后跑）
+
+交付物是一个按固定模板填好的 Markdown 文件：文案、后台属性表、关键词分配表、必答问题表、用户故事表、宣称依据表、上架前待办、三份需求单和检查结果。
 
 ### 它的核心方法
 
 - 用户体验优先：标题、前两条五点、主图和前 3 张图优先保证一眼看懂
-- 双读者逻辑：同时写给用户和亚马逊系统
-- Rufus 明示原则：只基于 Listing 中明确存在的信息回答
-- 最小追问原则：只有关键信息缺失时才追问阻塞项，不编造参数、认证、兼容范围或售后承诺
-
-### 支持的 9 个模块
-
-动笔前有一个前置步骤：关键词四层分配（不算模块，分配表随产出一起交付）。
-
-1. 标题（不超过 75 字符）
-2. Item Highlights（不超过 125 字符）
-3. 五点
-4. Search Terms
-5. 主附图设计需求
-6. A+设计需求
-7. 视频脚本
-8. Rufus问答验证
-9. Listing自查
+- 双读者：同时写给买家和亚马逊系统
+- 明示原则：Alexa 购物助手只认 Listing 里明确写出的信息，所以买家会问的都要写清楚
+- 不编造：每条宣称都要在你给的资料里找得到依据；只追问卡住当前模块的信息
 
 ### 仓库内容
 
-- 主 skill 入口：[SKILL.md](./SKILL.md)
+- 主入口：[SKILL.md](./SKILL.md)
+- 交付模板：[assets/listing-package-template.md](./assets/listing-package-template.md)
+- 检查脚本：[scripts/check_listing.py](./scripts/check_listing.py)
+- 平台规则：[references/platform-rules.md](./references/platform-rules.md)
+- 输入规范：[references/intake-schema.md](./references/intake-schema.md)
+- 方法说明：[references/workflow.md](./references/workflow.md)
+- 12 个模块文件：[references/modules/](./references/modules/)
+- 按需读的参考：[改旧稿与复盘迭代](./references/existing-listing.md)、[变体族](./references/variation-family.md)、[品牌调性兜底](./references/brand-os.md)、[MCP 数据补强](./references/mcp-data-enrichment.md)
 - UI 元数据：[agents/openai.yaml](./agents/openai.yaml)
-- SOP 与工作流说明：[references/workflow.md](./references/workflow.md)
-- 输入归一化规范：[references/intake-schema.md](./references/intake-schema.md)
-- MCP 数据补强规范：[references/mcp-data-enrichment.md](./references/mcp-data-enrichment.md)
-- 关键词四层分配 + 9 模块提示骨架：[references/module-prompts.md](./references/module-prompts.md)
 - 一键安装脚本：[install.sh](./install.sh)
+
+### 检查脚本
+
+只用 Python 标准库，3.8 以上即可。没有 Python 也能用这个 skill，只是长度改由 AI 人工估算并会注明。
+
+```bash
+python3 scripts/check_listing.py 你的交付文件.md --full --write-report
+```
+
+脚本只查长度、字符、重复和表格是否齐全，不判断宣称真假、类目特殊规则和图片视频。脚本通过不等于合规。
 
 ### 推荐使用方式
 
 直接在 Codex 里说：
 
-- `用 $amazon-listing-generator 根据这份产品资料生成完整 Listing 9 模块`
+- `用 $amazon-listing-generator 根据这份产品资料生成整套 Listing`
 - `用 $amazon-listing-generator 只生成亚马逊美国站标题、Item Highlights 和五点`
 - `用 $amazon-listing-generator 把这条超过 75 字符的旧标题拆成合规标题和 Item Highlights`
 - `用 $amazon-listing-generator 检查这份现有 Listing，先告诉我缺口，再重写标题和 Search Terms`
-- `用 $amazon-listing-generator 从 Rufus 视角检查这份 Listing 有没有回答不出来的问题`
+- `用 $amazon-listing-generator 验证 Alexa 购物助手能不能只靠这份 Listing 答上买家的问题`
+- `用 $amazon-listing-generator 根据这份上线数据做一轮复盘迭代`
+
+沿用旧说法也可以，比如“9 模块”“Rufus 问答验证”“Listing 自查”。
 
 ### 许可说明
 
@@ -129,45 +141,78 @@ curl -fsSL https://raw.githubusercontent.com/WaytoAIC/amazon-listing-generator/v
 
 ## English
 
-This skill turns product facts, competitor insights, review findings, and keyword pools into a structured Amazon Listing workflow.
+A listing-generation skill for Amazon sellers. It turns product facts, competitor insights, review findings, and keyword pools into a ready-to-upload listing package that holds up when shoppers and Alexa for Shopping (formerly Rufus) ask questions.
 
-It supports both full-pack generation across nine modules and targeted single-module output, while also handling existing-listing audits and partial rewrites.
+It supports full-pack generation, single-module output, existing-listing rewrites, and review-and-iterate rounds driven by post-launch data.
 When Sorftime, Sellersprite, or similar Amazon data MCPs are connected, the skill enriches keyword, competitor, review, and category data before drafting.
 
-### Updated for Amazon's 2026 title rules (v1.1.0)
+### What is new in v2.0
 
-- Since July 27, 2026, product titles must be 75 characters or fewer, including spaces, in all categories except media; Amazon's AI gradually rewrites over-limit titles, and Brand Registry sellers get a 14-day review window
-- A new Item Highlights field adds up to 125 characters of comma-separated phrases, shown below the title and searchable
-- How this skill responds: the title only states what the product is, material and feature attributes move to Item Highlights, and a four-layer keyword allocation runs before drafting so each keyword goes to one place only
-- Rules change; when in doubt, follow the latest Amazon Seller Central help pages
+- Questions first, copy second: the skill lists the questions a buyer must get answered before writing, then verifies each one after writing. Questions with no supporting facts are neither answered nor implied, and go to a to-do list
+- A backend attribute sheet: exact values are fixed first and the copy follows them, so the front end and the back end agree
+- Selling points become user stories: bullets, images, A+, and video share one table instead of drifting apart
+- Upgraded image, A+, and video briefs: one job per image, explicit forbidden elements, an English image-generation prompt per slot, and a video shot list with consistency rules. Briefs and prompts only; no image or video tool is called
+- Lengths are counted by a script: `scripts/check_listing.py` checks lengths, banned characters, repetition, and table completeness, and writes its result into the deliverable
+- One platform-rules file: every rule is marked as hard, recommended, or practice, with its help-page source and the date it was verified
+- New: variation-family rules, a review-and-iterate mode (at most two modules per round), a search-coverage version and a conversion version on request, and a fallback when brand tone is missing
 
-### What it helps with
+### Amazon 2026 rules covered
 
-- generating titles, Item Highlights, bullets, Search Terms, image briefs, A+ briefs, video scripts, Rufus validation, and listing self-checks
-- allocating keywords across four layers before drafting: core product terms to the title, feature and material terms to Item Highlights, use-case and purchase-reason terms to bullets and A+, long-tail terms and synonyms to Search Terms
-- splitting an existing title longer than 75 characters into a compliant title plus Item Highlights
-- normalizing fragmented inputs before drafting so modules stay consistent
-- improving mobile-first readability, SEO coverage, and Rufus answerability at the same time
-- auditing an existing draft first, then rewriting only the requested modules
-- enriching the brief with connected Amazon data MCPs before writing when more evidence is needed
+- Since July 27, 2026, titles must be 75 characters or fewer, including spaces, in all categories except media; the new Item Highlights field adds up to 125 characters
+- Since May 13, 2026, Rufus is called Alexa for Shopping
+- Images and videos with photorealistic AI-generated people must carry a metadata tag before upload
+- Since February 12, 2026, review sharing across variations has been narrowed
+- Rules were verified on 2026-09-18; sources are listed in [references/platform-rules.md](./references/platform-rules.md). Rules change; when in doubt, follow the latest Amazon Seller Central help pages
+
+### Flow
+
+1. Prepare: must-answer question table → selling points as user stories → four-layer keyword allocation → backend attribute sheet
+2. Text: title and Item Highlights → bullets and product description → Search Terms
+3. Visual: image brief → A+ brief → video shot list
+4. Check: Alexa question coverage verification → compliance check (the script always runs last)
+
+The deliverable is one Markdown file filled from a fixed template: copy, backend attribute sheet, keyword allocation table, must-answer question table, user story table, claim-evidence table, pre-launch to-do list, three briefs, and check results.
+
+### Core method
+
+- User experience first: the title, the first two bullets, the main image, and the first three images must be understood at a glance
+- Two readers: write for the shopper and for Amazon's systems at the same time
+- Explicit information: Alexa for Shopping only uses what the listing states, so everything a buyer may ask must be written down
+- No fabrication: every claim must trace back to the facts you supplied; the skill only asks for information that blocks the current module
 
 ### Included files
 
 - Main skill entry: [SKILL.md](./SKILL.md)
+- Deliverable template: [assets/listing-package-template.md](./assets/listing-package-template.md)
+- Checker script: [scripts/check_listing.py](./scripts/check_listing.py)
+- Platform rules: [references/platform-rules.md](./references/platform-rules.md)
+- Intake schema: [references/intake-schema.md](./references/intake-schema.md)
+- Method: [references/workflow.md](./references/workflow.md)
+- Twelve module files: [references/modules/](./references/modules/)
+- Read on demand: [existing listings and iteration](./references/existing-listing.md), [variation families](./references/variation-family.md), [brand tone fallback](./references/brand-os.md), [MCP enrichment](./references/mcp-data-enrichment.md)
 - UI metadata: [agents/openai.yaml](./agents/openai.yaml)
-- Workflow reference: [references/workflow.md](./references/workflow.md)
-- Intake normalization schema: [references/intake-schema.md](./references/intake-schema.md)
-- MCP enrichment guide: [references/mcp-data-enrichment.md](./references/mcp-data-enrichment.md)
-- Module prompt skeletons: [references/module-prompts.md](./references/module-prompts.md)
 - Installer: [install.sh](./install.sh)
+
+### Checker script
+
+Python standard library only, 3.8 or later. The skill still works without Python; lengths are then estimated by the AI and labelled as such.
+
+```bash
+python3 scripts/check_listing.py your-package.md --full --write-report
+```
+
+The script only checks lengths, characters, repetition, and table completeness. It does not judge whether claims are true, category-specific rules, or images and video. A passing script does not mean the listing is compliant.
 
 ### Suggested prompts
 
-- `Use $amazon-listing-generator to generate the full 9-module Amazon Listing pack from this product brief.`
+- `Use $amazon-listing-generator to generate the full Amazon listing package from this product brief.`
 - `Use $amazon-listing-generator to generate only the title, Item Highlights, and bullet points for Amazon US.`
 - `Use $amazon-listing-generator to split this over-75-character title into a compliant title plus Item Highlights.`
 - `Use $amazon-listing-generator to audit this existing listing draft, then rewrite the title and Search Terms only.`
-- `Use $amazon-listing-generator to validate whether Rufus can answer real buyer questions from this listing.`
+- `Use $amazon-listing-generator to verify whether Alexa for Shopping can answer real buyer questions from this listing alone.`
+- `Use $amazon-listing-generator to run one review-and-iterate round from this post-launch data.`
+
+Older wording still works, such as "9 modules", "Rufus validation", or "listing self-check".
 
 ### License note
 
