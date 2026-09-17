@@ -179,7 +179,7 @@ class FixtureTest(unittest.TestCase):
         self.assertEqual(ids(result, "FAIL"), [])
         self.assertEqual(ids(result, "WARN"), ["S7"])
         self.assertEqual(entries(result, "S7")[0]["measured"], "filter")
-        self.assertEqual(result["summary"], {"fail": 0, "warn": 1, "info": 1})
+        self.assertEqual(result["summary"], {"fail": 0, "warn": 1, "info": 2})  # S1 official count + L1 lengths
         self.assertEqual(result["params"]["brand"], "Brewlane")
         self.assertEqual(result["params"]["banned_terms"], ["unbreakable", "barista approved"])
         code, _out, _err = run_cli(fixture("pass-full.md"))
@@ -233,6 +233,24 @@ class FixtureTest(unittest.TestCase):
         result = check(text, full=True)
         self.assertEqual([c["field"] for c in entries(result, "X1", "WARN")], ["Item Highlights"])
         self.assertNotIn("Item Highlights", [c["field"] for c in entries(result, "X1", "FAIL")])
+
+    def test_measured_lengths_are_always_reported(self):
+        # Agents kept counting by hand after a pass, so the report must show the numbers itself.
+        title = "Brewlane Ceramic Pour Over Coffee Dripper"
+        text = package(title=title, highlights="Glazed Stoneware, Spiral Ribs", bullets=GOOD_BULLETS,
+                       search_terms="cone brewer filter holder")
+        overview = entries(check(text), "L1", "INFO")
+        self.assertEqual(len(overview), 1)
+        measured = overview[0]["measured"]
+        self.assertIn("Title %d 字符" % len(title), measured)
+        self.assertIn("Item Highlights 29 字符", measured)
+        self.assertIn("Bullets %s 字符" % "/".join(str(len(b)) for b in GOOD_BULLETS), measured)
+        self.assertIn("Search Terms 25 字节", measured)
+        code, result = run_json(fixture("variation.md"))
+        children = entries(result, "L2", "INFO")
+        self.assertEqual(len(children), 1)
+        self.assertIn("标题", children[0]["measured"])
+        self.assertIn("78 字符", children[0]["measured"], "the over-limit child is listed with its real length")
 
     def test_markdown_marks_inside_copy_warn(self):
         bullets = ["**Even extraction**: spiral ribs lift the paper so water flows steadily"] + GOOD_BULLETS[1:]

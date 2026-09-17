@@ -1104,6 +1104,14 @@ def check_variation_table(rep, doc, ctx):
                 rep.add("X5", location, level, name, "%d %s" % (measure(value), unit), "不超过 %d %s" % (maximum, unit))
     if not found and not lost:
         rep.add("X5", label, PASS, "各子体的标题、Item Highlights、Search Terms 长度", "%d 个子体" % len(rows))
+    if not lost:
+        measured = []
+        for i, row in enumerate(rows):
+            sizes = ["%s %d %s" % (short, measure(cell_value(row, column)), unit)
+                     for (column, (_h, _n, measure, _max, unit, _lv)), short
+                     in zip(columns, ("标题", "Item Highlights", "Search Terms")) if cell_value(row, column)]
+            measured.append("%s：%s" % (row_name(row, name_column, i), "、".join(sizes)))
+        rep.add("L2", label, INFO, "各子体实测长度", "；".join(measured), "仅供参考")
 
 
 def check_leftovers(rep, doc):
@@ -1120,6 +1128,23 @@ def check_leftovers(rep, doc):
     if doc.duplicates:
         rep.add("X7", "整份文件", WARN, "同名小节出现多次，只检查了第一处",
                 "、".join(SECTION_LABEL[k] for k in doc.duplicates), "每个小节只留一个")
+
+
+def add_length_overview(rep, fields):
+    """One INFO row with every measured length, so nobody has to count by hand after a pass."""
+    parts = []
+    if fields["title"].filled:
+        parts.append("Title %d 字符" % char_len(fields["title"].text))
+    if fields["highlights"].filled:
+        parts.append("Item Highlights %d 字符" % char_len(fields["highlights"].text))
+    if fields["bullets"].filled:
+        parts.append("Bullets %s 字符" % "/".join(str(char_len(v)) for v in fields["bullets"].values))
+    if fields["description"].filled:
+        parts.append("Description %d 字符" % char_len(fields["description"].text))
+    if fields["search_terms"].filled:
+        parts.append("Search Terms %d 字节" % byte_len(fields["search_terms"].text))
+    if parts:
+        rep.add("L1", "全部文案", INFO, "各字段实测长度", "；".join(parts), "仅供参考")
 
 
 # --- Running all checks on one document -------------------------------------------------------------
@@ -1167,6 +1192,7 @@ def check_text(text, file_label="-", full=False, overrides=None):
     if ready["search_terms"]:
         check_search_terms(rep, fields["search_terms"], fields, ctx)
     check_copy_wide(rep, fields, ctx)
+    add_length_overview(rep, fields)
     for key, check in (("keyword_table", check_keyword_table), ("qa_table", check_qa_table),
                        ("claims_table", check_claims_table), ("todo", check_todo),
                        ("variation_table", check_variation_table)):
