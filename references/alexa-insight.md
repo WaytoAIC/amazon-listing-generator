@@ -31,6 +31,7 @@ node bin/apinsight.js collect --asins <编号,编号> --questions summary_all
 - 竞品的回答只说明买家在意什么、同类产品什么地方出问题，不能当自家产品的事实。
 - 回答里反复出现的抱怨进 review_insights.pains，买家反复问的进 buyer_questions。
 - 问自己的商品时，Alexa 答不上来或者答错了，说明 Listing 这块没写清楚，记进「上架前待办」。
+- 文案里写过的宣称，Alexa 会当成事实转述给买家，还会自己往下发挥。所以没依据的话一个字都不能写——不是洁癖，是它会被放大成一句你担不起的承诺。
 
 ## 跑不了的时候
 
