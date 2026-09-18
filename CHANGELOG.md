@@ -6,7 +6,7 @@ The format is intentionally simple and optimized for release notes and repositor
 
 ## [Unreleased]
 
-## [v2.0.0] - not released yet
+## [v2.0.0] - 2026-09-18
 
 Rebuilds the skill from a set of prompts into a pipeline with inputs fixed before writing, a script check after writing, and one round of rework in between.
 
