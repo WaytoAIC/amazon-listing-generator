@@ -20,6 +20,7 @@ Rebuilds the skill from a set of prompts into a pipeline with inputs fixed befor
 - `assets/listing-package-template.md`: the fixed deliverable template the checker parses
 - `references/platform-rules.md`: single source of Amazon numbers, each rule marked hard, recommended, or practice, with its help-page source and verification date
 - Variation-family rules with a per-child difference table that the checker validates
+- The checker now reads the backend attribute sheet too: every attribute needs a source, a full check asks which front-end sentence carries it, and a full pack without the sheet does not pass
 - Review-and-iterate mode: locate the funnel stage, change at most two modules per round, log hypothesis and review date
 - Two-version output on request: a search-coverage version and a conversion version
 - Brand tone fallback (compact Brand OS card) for visual tasks without a brand tone
