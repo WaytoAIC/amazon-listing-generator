@@ -41,6 +41,11 @@ Rebuilds the skill from a set of prompts into a pipeline with inputs fixed befor
 - `install.sh` no longer installs `tests/`, `.claude/`, or `.github/`
 - Must-answer questions now come from asking Alexa rather than from imagination: sources rank measured > collected > reviews > simulated, and simulated questions only fill dimensions the first three miss
 - Coverage verification on a live product asks Alexa directly instead of role-playing it; a verdict of "do not answer" is recorded together with what Alexa says instead, because shoppers still get an answer — one drawn from reviews
+- Image and A+ briefs now carry the two-step text treatment as the default, not a fallback: the model renders a text-free base, code places the copy and the leader lines, and a base with no text is not the deliverable. A+ keeps module headlines and body in the backend text fields while in-image labels — dimension lines, part callouts, hotspot numbers — are placed by code
+- A+ modules are routed by what they actually produce — pure fields, a single image, a consistent set, a base image plus hotspot coordinates, or a shot list — instead of one prompt per screen. A comparison chart or a Q&A module is laid out from fields, so generating an image for it is wasted work
+- Anything that has to be exact is taken away from the model: counts, true relative proportions, fine repeating pattern (it weaves in fake letters), rulers and readings, and subject coverage and margins. Each has a stated code-side alternative
+- Every image slot carries acceptance criteria filled in with measured values against required values, not a bare "passed"; unfilled measurements are caught by the placeholder check
+- A picture makes claims too: a slot whose image demonstrates an unverified feature has to be shot for real, a known defect may not be smoothed away in the image, and when the image is changed to avoid a complaint the copy and the alt text change with it
 - Claim words the checker questions now cover consumer goods (safety, tested performance, environmental and endorsement claims), not only supplements; the checker reads the claims table itself and stays quiet about words it already backs, while a claim marked unverified is still raised
 
 ### Fixed
