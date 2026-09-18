@@ -1,4 +1,4 @@
-# amazon-listing-generator
+# waytoaic-amazon-listing-generator
 
 ## Way to AIC | 通往AI电商之路
 
@@ -123,12 +123,12 @@ python3 scripts/check_listing.py 你的交付文件.md --full --write-report
 
 直接在 Codex 里说：
 
-- `用 $amazon-listing-generator 根据这份产品资料生成整套 Listing`
-- `用 $amazon-listing-generator 只生成亚马逊美国站标题、Item Highlights 和五点`
-- `用 $amazon-listing-generator 把这条超过 75 字符的旧标题拆成合规标题和 Item Highlights`
-- `用 $amazon-listing-generator 检查这份现有 Listing，先告诉我缺口，再重写标题和 Search Terms`
-- `用 $amazon-listing-generator 验证 Alexa 购物助手能不能只靠这份 Listing 答上买家的问题`
-- `用 $amazon-listing-generator 根据这份上线数据做一轮复盘迭代`
+- `用 $waytoaic-amazon-listing-generator 根据这份产品资料生成整套 Listing`
+- `用 $waytoaic-amazon-listing-generator 只生成亚马逊美国站标题、Item Highlights 和五点`
+- `用 $waytoaic-amazon-listing-generator 把这条超过 75 字符的旧标题拆成合规标题和 Item Highlights`
+- `用 $waytoaic-amazon-listing-generator 检查这份现有 Listing，先告诉我缺口，再重写标题和 Search Terms`
+- `用 $waytoaic-amazon-listing-generator 验证 Alexa 购物助手能不能只靠这份 Listing 答上买家的问题`
+- `用 $waytoaic-amazon-listing-generator 根据这份上线数据做一轮复盘迭代`
 
 沿用旧说法也可以，比如“9 模块”“Rufus 问答验证”“Listing 自查”。
 
@@ -207,12 +207,12 @@ The script only checks lengths, characters, repetition, and table completeness. 
 
 ### Suggested prompts
 
-- `Use $amazon-listing-generator to generate the full Amazon listing package from this product brief.`
-- `Use $amazon-listing-generator to generate only the title, Item Highlights, and bullet points for Amazon US.`
-- `Use $amazon-listing-generator to split this over-75-character title into a compliant title plus Item Highlights.`
-- `Use $amazon-listing-generator to audit this existing listing draft, then rewrite the title and Search Terms only.`
-- `Use $amazon-listing-generator to verify whether Alexa for Shopping can answer real buyer questions from this listing alone.`
-- `Use $amazon-listing-generator to run one review-and-iterate round from this post-launch data.`
+- `Use $waytoaic-amazon-listing-generator to generate the full Amazon listing package from this product brief.`
+- `Use $waytoaic-amazon-listing-generator to generate only the title, Item Highlights, and bullet points for Amazon US.`
+- `Use $waytoaic-amazon-listing-generator to split this over-75-character title into a compliant title plus Item Highlights.`
+- `Use $waytoaic-amazon-listing-generator to audit this existing listing draft, then rewrite the title and Search Terms only.`
+- `Use $waytoaic-amazon-listing-generator to verify whether Alexa for Shopping can answer real buyer questions from this listing alone.`
+- `Use $waytoaic-amazon-listing-generator to run one review-and-iterate round from this post-launch data.`
 
 Older wording still works, such as "9 modules", "Rufus validation", or "listing self-check".
 

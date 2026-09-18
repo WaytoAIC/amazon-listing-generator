@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Repository lints for the amazon-listing-generator skill.
+"""Repository lints for the waytoaic-amazon-listing-generator skill.
 
 Run from anywhere:  python3 tests/check_repo.py
 Standard library only. Exit code 0 = all lints pass, 1 = at least one failed.
@@ -10,7 +10,7 @@ Lints:
   2. every file mentioned in the instructions exists; no orphan reference files
   3. deprecated field names are gone
   4. Amazon numbers appear only where they are allowed to
-  5. README prefix block (lines 1-32) is byte-identical to the published one
+  5. README prefix block (lines 3-32) is byte-identical to the published one
   6. SKILL.md frontmatter is well formed
 """
 import hashlib
@@ -24,7 +24,7 @@ ROOT = Path(__file__).resolve().parents[1]
 # against an Amazon help page, and only after trimming what is actually redundant — never to
 # make room for longer prose. 2026-09-18: 36000 -> 38000 for the corrected image and A+ rules.
 BUDGETS = {"SKILL.md": 6000, "text_module": 2200, "visual_module": 3000, "corpus": 38000}
-README_PREFIX_SHA256 = "28e7413c09e7722683e7a30fe51e341bf95826ce97b191c0b462f027cdc20965"
+README_PREFIX_SHA256 = "66492b8e3dbc1e83c12da06b87ba13dcb58a64993addbf655a0702180702c466"
 DEPRECATED = [
     "country_site", "bullet_points", "usps_specs", "backend_terms", "backend_keywords",
     "keywords_optional", "brand_name", "other_product_info", "keyword_evidence",
@@ -129,10 +129,11 @@ def lint_numbers():
 
 
 def lint_readme_prefix():
+    """Lines 3-32 are the fixed Way to AIC block. Line 1 is the project title and may change."""
     lines = read(ROOT / "README.md").split("\n")
-    digest = hashlib.sha256(("\n".join(lines[:32]) + "\n").encode("utf-8")).hexdigest()
+    digest = hashlib.sha256(("\n".join(lines[2:32]) + "\n").encode("utf-8")).hexdigest()
     if digest != README_PREFIX_SHA256:
-        fail("readme", "README.md lines 1-32 (Way to AIC prefix block) were changed")
+        fail("readme", "README.md lines 3-32 (Way to AIC prefix block) were changed")
 
 
 def lint_frontmatter():
@@ -142,8 +143,8 @@ def lint_frontmatter():
         fail("frontmatter", "SKILL.md has no YAML frontmatter")
         return
     block = match.group(1)
-    if not re.search(r"^name:\s*amazon-listing-generator\s*$", block, re.M):
-        fail("frontmatter", "name must be amazon-listing-generator")
+    if not re.search(r"^name:\s*waytoaic-amazon-listing-generator\s*$", block, re.M):
+        fail("frontmatter", "name must be waytoaic-amazon-listing-generator")
     description = re.search(r"^description:\s*(.+)$", block, re.M)
     if not description:
         fail("frontmatter", "description is missing")

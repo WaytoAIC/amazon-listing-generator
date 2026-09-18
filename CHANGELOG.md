@@ -10,6 +10,10 @@ The format is intentionally simple and optimized for release notes and repositor
 
 Rebuilds the skill from a set of prompts into a pipeline with inputs fixed before writing, a script check after writing, and one round of rework in between.
 
+### Changed — renamed
+
+- The skill is now `waytoaic-amazon-listing-generator`. Invoke it as `$waytoaic-amazon-listing-generator`, and it installs into a directory of that name. The GitHub repository keeps its address, so existing install commands and links still work. The installer removes an install left behind under the old name, so you do not end up carrying two copies of the same skill
+
 ### Added
 
 - Must-answer buyer question table, built before writing and verified after writing; questions with no supporting facts are neither answered nor implied and go to a pre-launch to-do list

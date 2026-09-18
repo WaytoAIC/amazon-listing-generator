@@ -4,7 +4,8 @@ set -eu
 
 REPO="WaytoAIC/amazon-listing-generator"
 REF="main"
-SKILL_NAME="amazon-listing-generator"
+SKILL_NAME="waytoaic-amazon-listing-generator"
+LEGACY_SKILL_NAME="amazon-listing-generator"
 TARGET="auto"
 DEST_ROOT=""
 
@@ -21,7 +22,7 @@ Examples:
 
 Options:
   --target   Install target. auto|codex|openclaw. Default: auto
-  --dest     Override the skills root directory. The script installs into DIR/amazon-listing-generator
+  --dest     Override the skills root directory. The script installs into DIR/waytoaic-amazon-listing-generator
   --ref      Branch or tag to install. Default: main
   --repo     GitHub repo in OWNER/REPO form. Default: WaytoAIC/amazon-listing-generator
   -h, --help Show this help
@@ -138,6 +139,12 @@ else
   cp -R "$SOURCE_DIR"/. "$INSTALL_DIR"/
   rm -rf "$INSTALL_DIR/.git" "$INSTALL_DIR/tests" "$INSTALL_DIR/.claude" "$INSTALL_DIR/.github"
   rm -f "$INSTALL_DIR/.DS_Store"
+fi
+
+LEGACY_DIR="${DEST_ROOT%/}/$LEGACY_SKILL_NAME"
+if [ "$LEGACY_DIR" != "$INSTALL_DIR" ] && [ -f "$LEGACY_DIR/SKILL.md" ]; then
+  rm -rf "$LEGACY_DIR"
+  echo "Removed the old install at: $LEGACY_DIR"
 fi
 
 echo "Installed $SKILL_NAME to: $INSTALL_DIR"

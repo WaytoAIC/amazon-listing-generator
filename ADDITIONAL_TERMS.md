@@ -1,4 +1,4 @@
-# Additional Terms for amazon-listing-generator
+# Additional Terms for waytoaic-amazon-listing-generator
 
 These additional terms supplement the license referenced in [LICENSE.md](./LICENSE.md).
 
@@ -39,7 +39,7 @@ You must keep all copyright, attribution, and license notices intact in source d
 
 Any public redistribution of this repository or a derivative must clearly attribute the original project as:
 
-- `amazon-listing-generator`
+- `waytoaic-amazon-listing-generator`
 - Original author: Wesley Zane
 
 ## 5. Commercial licensing

@@ -1,5 +1,5 @@
 ---
-name: amazon-listing-generator
+name: waytoaic-amazon-listing-generator
 description: 生成和优化亚马逊 Listing 全套内容。先定买家必答问题、用户故事、关键词分配和后台属性，再写标题（不超过 75 字符）、Item Highlights、五点、商品描述、Search Terms，出图片、A+、视频需求单，最后做 Alexa 购物助手（原 Rufus）问答覆盖验证和带脚本的合规检查。也用于只做单个模块、把超长旧标题拆成合规标题加 Item Highlights、审核和改写已有 Listing、按上线数据复盘迭代。买家问什么可以直接问 Alexa 采集回来，用户给导出文件或本机装了 amazon-alexa-insight 都行。接入 Sorftime、卖家精灵等 Amazon 数据 MCP 时先做数据补强。
 metadata:
   version: "2.0.0"

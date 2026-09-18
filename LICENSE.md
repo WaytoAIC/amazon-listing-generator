@@ -18,7 +18,7 @@ Official PolyForm Noncommercial 1.0.0 text:
 Required notice:
 
 - Copyright (c) 2026 Wesley Zane
-- Project: amazon-listing-generator
+- Project: waytoaic-amazon-listing-generator
 
 If you receive a copy of this repository or a derivative, you must also receive:
 
