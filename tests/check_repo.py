@@ -163,15 +163,15 @@ def lint_template_sections():
     spec = importlib.util.spec_from_file_location("cl", ROOT / "scripts" / "check_listing.py")
     checker = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(checker)
+    # "Listing 文案" only wraps the ### copy headings the checker already knows.
+    containers = {"Listing 文案"}
     text = read(ROOT / "assets" / "listing-package-template.md")
-    heading, has_table = None, False
-    for line in text.split("\n") + ["## "]:
-        if line.startswith("## "):
-            if heading and has_table and checker.heading_key(heading) is None:
-                fail("template", f"「{heading}」是表格小节，但检查脚本不认识它")
-            heading, has_table = line[3:].strip(), False
-        elif line.lstrip().startswith("|"):
-            has_table = True
+    for line in text.split("\n"):
+        if not line.startswith("## "):
+            continue
+        heading = line[3:].strip()
+        if heading not in containers and checker.heading_key(heading) is None:
+            fail("template", f"模板有「{heading}」小节，但检查脚本不认识它")
 
 
 def main():

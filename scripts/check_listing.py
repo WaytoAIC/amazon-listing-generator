@@ -63,6 +63,7 @@ HEADING_ALIASES = {
     "story_table": ("用户故事表",),
     "manual_check": ("人工判断检查",),
     "iteration_log": ("迭代记录",),
+    "review_notes": ("体检结论",),
     "params": ("检查参数",),
     "report": ("机器检查结果",),
 }
@@ -85,6 +86,7 @@ SECTION_LABEL = {
     "story_table": "用户故事表",
     "manual_check": "人工判断检查",
     "iteration_log": "迭代记录",
+    "review_notes": "体检结论",
     "params": "检查参数",
     "report": "机器检查结果",
 }
@@ -92,7 +94,7 @@ COPY_KEYS = ("title", "highlights", "bullets", "description", "search_terms")
 # Sections the script actually inspects. A file with none of them is a usage error.
 CHECKABLE_KEYS = COPY_KEYS + ("qa_table", "claims_table", "attr_table", "todo", "variation_table",
                               "keyword_table", "image_brief", "aplus_brief", "video_brief",
-                              "story_table", "manual_check", "iteration_log")
+                              "story_table", "manual_check", "iteration_log", "review_notes")
 
 # --- Word lists -----------------------------------------------------------
 STOP_WORDS = frozenset(
@@ -1013,7 +1015,7 @@ REQUIRED_IN_FULL = ("title", "highlights", "bullets", "search_terms", "keyword_t
 MISSING_ID = {"title": "X1", "highlights": "X1", "bullets": "X1", "search_terms": "X1", "keyword_table": "X1",
               "qa_table": "X2", "claims_table": "X3", "attr_table": "X8", "todo": "X4", "description": "D1",
               "variation_table": "X5", "image_brief": "X9", "aplus_brief": "X9",
-              "video_brief": "X9", "story_table": "X10", "manual_check": "X11", "iteration_log": "X12"}
+              "video_brief": "X9", "story_table": "X10", "manual_check": "X11", "iteration_log": "X12", "review_notes": "X13"}
 MISSING_MESSAGE = "文件里没有这个小节"
 
 
@@ -1205,6 +1207,13 @@ def check_iteration_log(rep, doc, ctx):
     table_is_empty(rep, "X12", label, rows, ctx)
 
 
+def check_review_notes(rep, doc, ctx):
+    """体检结论 is prose, so the only machine-decidable thing is that it says something."""
+    label = SECTION_LABEL["review_notes"]
+    lines = [ln for ln in doc.sections["review_notes"].lines if not is_blank_value(ln)]
+    rep.judge("X13", label, not lines, FAIL, "体检结论没写", "空的", "写结论和改写优先级")
+
+
 def check_manual_check(rep, doc, ctx):
     """Human judgment section: every row states one of the three allowed results."""
     label = SECTION_LABEL["manual_check"]
@@ -1384,6 +1393,7 @@ def check_text(text, file_label="-", full=False, overrides=None):
                        ("image_brief", check_image_brief), ("aplus_brief", check_aplus_brief),
                        ("video_brief", check_video_brief), ("story_table", check_story_table),
                        ("manual_check", check_manual_check), ("iteration_log", check_iteration_log),
+                       ("review_notes", check_review_notes),
                        ("todo", check_todo), ("variation_table", check_variation_table)):
         if doc.has(key):
             check(rep, doc, ctx)

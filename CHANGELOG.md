@@ -21,6 +21,9 @@ Rebuilds the skill from a set of prompts into a pipeline with inputs fixed befor
 - `references/platform-rules.md`: single source of Amazon numbers, each rule marked hard, recommended, or practice, with its help-page source and verification date
 - Variation-family rules with a per-child difference table that the checker validates
 - The checker now reads the backend attribute sheet too: every attribute needs a source, a full check asks which front-end sentence carries it, and a full pack without the sheet does not pass
+- Every section the template carries is now one the checker knows: image, A+ and video briefs, the user-story table, the human-judgment table, the iteration log and the review notes all get at least an is-it-filled check, and a repository lint fails if a future template section is added without teaching the checker
+- The storyboard is counted cell by cell, so a shot list whose storyboard was emptied or overwritten no longer passes
+- Human-judgment rows must open with one of the three allowed results; a reason may follow
 - Review-and-iterate mode: locate the funnel stage, change at most two modules per round, log hypothesis and review date
 - Two-version output on request: a search-coverage version and a conversion version
 - Brand tone fallback (compact Brand OS card) for visual tasks without a brand tone
@@ -43,6 +46,7 @@ Rebuilds the skill from a set of prompts into a pipeline with inputs fixed befor
 ### Fixed
 
 - A verdict written as "not covered, but minor" no longer slips past the uncovered-question warning: the leading word decides and a reason may follow it; verdicts outside the four allowed words are now flagged
+- A deliverable with no copy sections no longer reports a fingerprint. Every such file used to share one constant hash, which read as a match between unrelated files; the report now says there is no copy to fingerprint
 
 ### Removed
 
