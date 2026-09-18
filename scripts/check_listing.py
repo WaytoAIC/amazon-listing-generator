@@ -104,9 +104,29 @@ BULLET_PROHIBITED_PHRASES = (
     "satisfaction guaranteed",
 )
 SEARCH_TERM_SUBJECTIVE = ("new", "sale", "best", "cheapest", "cheap", "amazing", "latest", "hot")
+# Words that assert something a buyer could hold the seller to. WARN only: keep the word
+# when the claims table backs it, delete it when it does not. Separators do not matter —
+# "leak proof" also finds "leak-proof" and "leakproof".
 CAUTION_TERMS = (
-    "guaranteed", "guarantee", "cure", "cures", "treat", "treats", "prevent", "prevents",
-    "fda", "medical grade", "certified", "warranty", "#1",
+    # 承诺与背书
+    "guaranteed", "guarantee", "warranty", "lifetime", "#1", "certified", "fda",
+    "medical grade", "doctor recommended", "dermatologist tested", "clinically",
+    "oeko tex", "greenguard", "ul listed",
+    # 健康与功效
+    "cure", "cures", "treat", "treats", "prevent", "prevents", "heals", "healthy",
+    "hypoallergenic", "sterile", "sanitize", "sanitizes", "disinfect", "disinfects",
+    "antibacterial", "antimicrobial",
+    # 安全
+    "safe", "safety", "non toxic", "toxin free", "chemical free", "bpa free",
+    "phthalate free", "lead free", "food grade", "food safe", "flame retardant",
+    "fire resistant", "fireproof",
+    # 买家自己就能验证的性能
+    "non slip", "anti slip", "slip resistant", "non skid", "waterproof",
+    "water resistant", "leak proof", "spill proof", "shatterproof",
+    "scratch resistant", "stain resistant", "tear resistant", "mold resistant",
+    "mildew resistant", "odorless", "odor free",
+    # 环保
+    "organic", "biodegradable", "compostable", "recyclable", "sustainable",
 )
 # Cell values that mean "nothing here".
 DASH_VALUES = frozenset(("", "—", "——", "–", "-", "--", "/"))
@@ -614,6 +634,8 @@ class Context(object):
         language = params["language"].lower()
         self.english = language.startswith("en")
         self.cjk_ok = language.startswith(("ja", "zh"))
+        # Caution words the claims table already backs with evidence; G2 leaves those alone.
+        self.backed = frozenset()
 
 
 def unique(items):
@@ -919,7 +941,8 @@ def check_copy_wide(rep, fields, ctx):
         # Do not repeat what T4 (title) or B6 (bullets) already reported as FAIL.
         already = {"title": TITLE_PROMO_PHRASES, "bullets": BULLET_PROHIBITED_PHRASES}.get(key, ())
         rest = blank_spans(text, [span for _t, span in find_terms(text, already)])
-        return "、".join(term_names(find_terms(rest, CAUTION_TERMS)))
+        names = [n for n in term_names(find_terms(rest, CAUTION_TERMS)) if n not in ctx.backed]
+        return "、".join(names)
 
     def cjk(_key, text, _untidy):
         found = CJK_RE.findall(text)
@@ -1060,6 +1083,28 @@ def check_qa_table(rep, doc, ctx):
     odd = [name for name, _k, _a, verdict, kind in table if verdict and not kind]
     rep.judge("X2f", label, odd, WARN, "判定的取值", "、".join(odd),
               "开头写 " + " / ".join(VERDICT_VALUES) + "，理由写在后面")
+
+
+def backed_claim_terms(doc):
+    """Caution words the claims table backs with real evidence.
+
+    A row counts only when its 依据 cell holds something other than a dash, 无 or 待核实 —
+    an unverified claim is exactly the kind G2 should still ask about.
+    """
+    if not doc.has("claims_table"):
+        return frozenset()
+    headers, rows = parse_table(doc.sections["claims_table"].lines)
+    rows = data_rows(rows)
+    claim_column = find_column(headers, "宣称")
+    if "依据" not in headers or claim_column is None:
+        return frozenset()
+    backed = []
+    for row in rows:
+        evidence = cell_value(row, "依据").strip()
+        if evidence.lower() in NO_EVIDENCE_VALUES or evidence.startswith("待核实"):
+            continue
+        backed.extend(term_names(find_terms(cell_value(row, claim_column), CAUTION_TERMS)))
+    return frozenset(backed)
 
 
 def check_claims_table(rep, doc, ctx):
@@ -1205,6 +1250,7 @@ def check_text(text, file_label="-", full=False, overrides=None):
         check_description(rep, fields["description"], ctx)
     if ready["search_terms"]:
         check_search_terms(rep, fields["search_terms"], fields, ctx)
+    ctx.backed = backed_claim_terms(doc)
     check_copy_wide(rep, fields, ctx)
     add_length_overview(rep, fields)
     for key, check in (("keyword_table", check_keyword_table), ("qa_table", check_qa_table),

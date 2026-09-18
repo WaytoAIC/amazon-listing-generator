@@ -216,7 +216,9 @@ class FixtureTest(unittest.TestCase):
         code, result = run_json(fixture("partial-title-only.md"))
         self.assertEqual(code, 0)
         self.assertEqual(result["mode"], "partial")
-        self.assertEqual(ids(result, "FAIL") + ids(result, "WARN"), [])
+        self.assertEqual(ids(result, "FAIL"), [])
+        # "dishwasher safe" is a claim and this file carries no claims table to back it.
+        self.assertEqual(ids(result, "WARN"), ["G2"])
         skipped = [c["field"] for c in result["checks"] if c["level"] == "SKIP"]
         for label in ("Bullet Points", "Search Terms", "必答问题表", "宣称依据表", "上架前待办", "关键词分配表"):
             self.assertIn(label, skipped)
@@ -536,6 +538,17 @@ class StructureTest(unittest.TestCase):
         result = check("## 必答问题表\n\n" + QA_HEADER + rows)
         self.assertEqual(entries(result, "X2d", "WARN")[0]["measured"], "Q01")
         self.assertEqual(entries(result, "X2f", "PASS")[0]["level"], "PASS")
+
+    def test_claims_table_with_evidence_silences_the_caution_word(self):
+        copy = ("## Listing 文案\n\n### Title\n\nBrewlane Ceramic Dripper, 1-2 Cup, Matte White\n\n"
+                "### Item Highlights\n\nSpiral ribs, single hole base, dishwasher safe stoneware\n\n")
+        head = "## 宣称依据表\n\n| 依据 | 编号 | 买家能看到的宣称 | 出现位置 |\n|---|---|---|---|\n"
+        self.assertEqual(ids(check(copy), "WARN"), ["G2"])
+        backed = copy + head + "| 用户资料：洗碗机测试记录 | C01 | dishwasher safe | Item Highlights |\n"
+        self.assertEqual(ids(check(backed), "WARN"), [])
+        # 待核实 is not evidence yet, so the word still has to be questioned.
+        unverified = copy + head + "| 待核实：供应商口头说的 | C01 | dishwasher safe | Item Highlights |\n"
+        self.assertEqual(ids(check(unverified), "WARN"), ["G2"])
 
     def test_verdict_outside_the_four_values_warns(self):
         rows = ("| Q01 | Fits a door? | 实测 | 高 | 有 | 五点 | Bullet 1 | 回头再说 |\n"
