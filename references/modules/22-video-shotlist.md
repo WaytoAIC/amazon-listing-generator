@@ -33,4 +33,4 @@ product_name、usps、specs、product_photos、video_plan、brand_tone、must_an
 
 ## 产出
 
-交付模板的「视频分镜表」和「九宫格故事板描述」。
+交付模板的「视频分镜表」和「九宫格故事板描述」。故事板逐格写，编号 1 到 9 一格一行，脚本会数格数。

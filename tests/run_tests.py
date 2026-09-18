@@ -566,6 +566,20 @@ class StructureTest(unittest.TestCase):
         self.assertEqual([c["level"] for c in entries(check(table), "X8b")], ["SKIP"])
         self.assertEqual(entries(check(table, full=True), "X8b", "WARN")[0]["measured"], "Weave Type")
 
+    def test_visual_briefs_are_checked_only_when_present(self):
+        shots = ("## 视频分镜表\n\n| 镜头 | 目的 | 画面 |\n|---|---|---|\n"
+                 + "".join("| %d | 目的 | 画面 |\n" % i for i in range(1, 4)))
+        board = "\n### 九宫格故事板描述\n\n" + "".join("%d. 第 %d 格画面\n" % (i, i) for i in range(1, 10))
+        # No visual section at all: recorded as skipped, never as a problem.
+        absent = [c for c in check("## 上架前待办\n\n无\n")["checks"] if c["id"].startswith("X9")]
+        self.assertEqual(sorted(set(c["level"] for c in absent)), ["SKIP"])
+        # Shot list without a storyboard, and with a storyboard that lost its cells.
+        self.assertEqual(entries(check(shots), "X9b", "WARN")[0]["measured"], "没有")
+        broken = shots + "\n### 九宫格故事板描述\n\n一行串进来的无关文字\n"
+        self.assertEqual(entries(check(broken), "X9b", "WARN")[0]["measured"], "0 格")
+        self.assertEqual(entries(check(shots + board), "X9b", "PASS")[0]["level"], "PASS")
+        self.assertEqual(entries(check(shots + board), "X9", "PASS")[0]["measured"], "3 行")
+
     def test_tables_are_read_by_header_text_not_position(self):
         table = ("## 宣称依据表\n\n| 依据 | 编号 | 买家能看到的宣称 | 出现位置 |\n|---|---|---|---|\n"
                  "| 用户资料：规格表 | C01 | 1-2 Cup | Title |\n| — | C02 | dishwasher safe | Bullet 3 |\n"

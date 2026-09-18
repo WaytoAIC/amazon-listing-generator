@@ -57,6 +57,8 @@ HEADING_ALIASES = {
     "variation_table": ("变体差异表",),
     "keyword_table": ("关键词分配表",),
     "attr_table": ("后台属性表",),
+    "image_brief": ("图片需求单",),
+    "video_brief": ("视频分镜表",),
     "params": ("检查参数",),
     "report": ("机器检查结果",),
 }
@@ -73,13 +75,15 @@ SECTION_LABEL = {
     "variation_table": "变体差异表",
     "keyword_table": "关键词分配表",
     "attr_table": "后台属性表",
+    "image_brief": "图片需求单",
+    "video_brief": "视频分镜表",
     "params": "检查参数",
     "report": "机器检查结果",
 }
 COPY_KEYS = ("title", "highlights", "bullets", "description", "search_terms")
 # Sections the script actually inspects. A file with none of them is a usage error.
 CHECKABLE_KEYS = COPY_KEYS + ("qa_table", "claims_table", "attr_table", "todo", "variation_table",
-                              "keyword_table")
+                              "keyword_table", "image_brief", "video_brief")
 
 # --- Word lists -----------------------------------------------------------
 STOP_WORDS = frozenset(
@@ -992,7 +996,7 @@ REQUIRED_IN_FULL = ("title", "highlights", "bullets", "search_terms", "keyword_t
                     "claims_table", "attr_table", "todo")
 MISSING_ID = {"title": "X1", "highlights": "X1", "bullets": "X1", "search_terms": "X1", "keyword_table": "X1",
               "qa_table": "X2", "claims_table": "X3", "attr_table": "X8", "todo": "X4", "description": "D1",
-              "variation_table": "X5"}
+              "variation_table": "X5", "image_brief": "X9", "video_brief": "X9"}
 MISSING_MESSAGE = "文件里没有这个小节"
 
 
@@ -1154,6 +1158,41 @@ def check_attr_table(rep, doc, ctx):
         rep.add("X8b", label, SKIP, "对应前台哪句在检查那一步才填，默认检查先不查")
 
 
+STORYBOARD_CELLS = 9
+
+
+def check_image_brief(rep, doc, ctx):
+    label = SECTION_LABEL["image_brief"]
+    rows = data_rows(parse_table(doc.sections["image_brief"].lines)[1])
+    table_is_empty(rep, "X9", label, rows, ctx)
+
+
+def check_video_brief(rep, doc, ctx):
+    """Shot list plus the storyboard, which must describe one frame per cell."""
+    label = SECTION_LABEL["video_brief"]
+    section = doc.sections["video_brief"]
+    rows = data_rows(parse_table(section.lines)[1])
+    if table_is_empty(rep, "X9", label, rows, ctx):
+        return
+    body, seen = [], False
+    for i in range(section.start, min(section.end, len(doc.visible))):
+        line = doc.visible[i]
+        if line is None:
+            continue
+        heading = HEADING_RE.match(line)
+        if heading:
+            seen = "九宫格" in heading.group(2)
+            continue
+        if seen and line.strip() and "|" not in line:
+            body.append(line.strip())
+    if not seen:
+        rep.add("X9b", label, WARN, "没有「九宫格故事板描述」小节", "没有", "排完镜头补上")
+        return
+    cells = [ln for ln in body if re.match(r"^\s*(?:[0-9]+[.、)]|[-*])\s*\S", ln)]
+    rep.judge("X9b", label, len(cells) != STORYBOARD_CELLS, WARN, "九宫格故事板的格数",
+              "%d 格" % len(cells), "逐格写，一共 %d 格" % STORYBOARD_CELLS)
+
+
 def check_todo(rep, doc, ctx):
     label = SECTION_LABEL["todo"]
     lines = doc.sections["todo"].lines
@@ -1286,6 +1325,7 @@ def check_text(text, file_label="-", full=False, overrides=None):
     add_length_overview(rep, fields)
     for key, check in (("keyword_table", check_keyword_table), ("qa_table", check_qa_table),
                        ("claims_table", check_claims_table), ("attr_table", check_attr_table),
+                       ("image_brief", check_image_brief), ("video_brief", check_video_brief),
                        ("todo", check_todo), ("variation_table", check_variation_table)):
         if doc.has(key):
             check(rep, doc, ctx)
