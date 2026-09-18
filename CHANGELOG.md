@@ -11,6 +11,7 @@ The format is intentionally simple and optimized for release notes and repositor
 ### Fixed
 
 - The installer refuses any extracted source that does not carry a `SKILL.md` at its root. The sync step runs with `--delete` against `"$SOURCE_DIR/"`, so an empty `SOURCE_DIR` would expand to `/` and copy the whole filesystem into the install directory. The previous guard only checked for an empty string; it now also requires a real directory containing this skill
+- Only `install.sh` changed. The skill itself is identical to v2.0.0, which is why `SKILL.md` still reads `version: "2.0.0"`
 
 ## [v2.0.0] - 2026-09-18
 
