@@ -35,6 +35,13 @@ Rebuilds the skill from a set of prompts into a pipeline with inputs fixed befor
 - One field vocabulary across all files (`marketplace`, `bullets`, `search_terms`, `banned_terms`, and so on)
 - Module instructions split into twelve files under `references/modules/`; the entry file routes to one file per step
 - `install.sh` no longer installs `tests/`, `.claude/`, or `.github/`
+- Must-answer questions now come from asking Alexa rather than from imagination: sources rank measured > collected > reviews > simulated, and simulated questions only fill dimensions the first three miss
+- Coverage verification on a live product asks Alexa directly instead of role-playing it; a verdict of "do not answer" is recorded together with what Alexa says instead, because shoppers still get an answer — one drawn from reviews
+- Claim words the checker questions now cover consumer goods (safety, tested performance, environmental and endorsement claims), not only supplements; the checker reads the claims table itself and stays quiet about words it already backs, while a claim marked unverified is still raised
+
+### Fixed
+
+- A verdict written as "not covered, but minor" no longer slips past the uncovered-question warning: the leading word decides and a reason may follow it; verdicts outside the four allowed words are now flagged
 
 ### Removed
 
