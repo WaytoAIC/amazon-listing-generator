@@ -78,7 +78,8 @@ SECTION_LABEL = {
 }
 COPY_KEYS = ("title", "highlights", "bullets", "description", "search_terms")
 # Sections the script actually inspects. A file with none of them is a usage error.
-CHECKABLE_KEYS = COPY_KEYS + ("qa_table", "claims_table", "todo", "variation_table", "keyword_table")
+CHECKABLE_KEYS = COPY_KEYS + ("qa_table", "claims_table", "attr_table", "todo", "variation_table",
+                              "keyword_table")
 
 # --- Word lists -----------------------------------------------------------
 STOP_WORDS = frozenset(
@@ -988,9 +989,10 @@ def check_copy_wide(rep, fields, ctx):
 
 # --- Checks: tables and structure (X*) ------------------------------------------------------------
 REQUIRED_IN_FULL = ("title", "highlights", "bullets", "search_terms", "keyword_table", "qa_table",
-                    "claims_table", "todo")
+                    "claims_table", "attr_table", "todo")
 MISSING_ID = {"title": "X1", "highlights": "X1", "bullets": "X1", "search_terms": "X1", "keyword_table": "X1",
-              "qa_table": "X2", "claims_table": "X3", "todo": "X4", "description": "D1", "variation_table": "X5"}
+              "qa_table": "X2", "claims_table": "X3", "attr_table": "X8", "todo": "X4", "description": "D1",
+              "variation_table": "X5"}
 MISSING_MESSAGE = "文件里没有这个小节"
 
 
@@ -1121,6 +1123,35 @@ def check_claims_table(rep, doc, ctx):
     bare = [row_name(row, id_column, i) for i, row in enumerate(rows)
             if cell_value(row, column).lower() in NO_EVIDENCE_VALUES]
     rep.judge("X3", label, bare, FAIL, "每条宣称都有依据", "、".join(bare), "每条宣称都写依据；没核实的写 待核实")
+
+
+def check_attr_table(rep, doc, ctx):
+    """Backend attributes: every value needs a source, and the check pass links it to the copy."""
+    label = SECTION_LABEL["attr_table"]
+    headers, rows = parse_table(doc.sections["attr_table"].lines)
+    rows = data_rows(rows)
+    if table_is_empty(rep, "X8", label, rows, ctx):
+        return
+    lost = [name for name in ("属性", "值", "依据") if find_column(headers, name) is None]
+    if lost:
+        rep.add("X8", label, FAIL, "表头被改过，找不到这些列", "、".join(lost), "不要改表头")
+        return
+    id_column = find_column(headers, "属性")
+    evidence = find_column(headers, "依据")
+    bare = [row_name(row, id_column, i) for i, row in enumerate(rows)
+            if cell_value(row, evidence).lower() in NO_EVIDENCE_VALUES]
+    rep.judge("X8", label, bare, FAIL, "每条属性都有依据", "、".join(bare),
+              "值要指向用户资料里的具体事实；没核实的写 待核实")
+    front = find_column(headers, "对应前台")
+    if front is None:
+        rep.add("X8b", label, SKIP, "没有「对应前台哪句」列，没查")
+    elif ctx.full:
+        blank = [row_name(row, id_column, i) for i, row in enumerate(rows)
+                 if not cell_value(row, front)]
+        rep.judge("X8b", label, blank, WARN, "对应前台哪句", "、".join(blank),
+                  "检查时逐行填；前台没写这条就填 无")
+    else:
+        rep.add("X8b", label, SKIP, "对应前台哪句在检查那一步才填，默认检查先不查")
 
 
 def check_todo(rep, doc, ctx):
@@ -1254,8 +1285,8 @@ def check_text(text, file_label="-", full=False, overrides=None):
     check_copy_wide(rep, fields, ctx)
     add_length_overview(rep, fields)
     for key, check in (("keyword_table", check_keyword_table), ("qa_table", check_qa_table),
-                       ("claims_table", check_claims_table), ("todo", check_todo),
-                       ("variation_table", check_variation_table)):
+                       ("claims_table", check_claims_table), ("attr_table", check_attr_table),
+                       ("todo", check_todo), ("variation_table", check_variation_table)):
         if doc.has(key):
             check(rep, doc, ctx)
     check_leftovers(rep, doc)

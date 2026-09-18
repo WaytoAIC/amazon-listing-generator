@@ -205,7 +205,7 @@ class FixtureTest(unittest.TestCase):
     def test_fail_structure(self):
         code, result = run_json(fixture("fail-structure.md"), "--full")
         self.assertEqual(code, 1)
-        self.assertEqual(set(ids(result, "FAIL")), {"X2b", "X2c", "X3"})
+        self.assertEqual(set(ids(result, "FAIL")), {"X2b", "X2c", "X3", "X8"})
         self.assertEqual(entries(result, "X2b", "FAIL")[0]["measured"], "Q02")
         self.assertEqual(entries(result, "X2c", "FAIL")[0]["measured"], "Q04")
         self.assertEqual(entries(result, "X3", "FAIL")[0]["measured"], "C03")
@@ -224,7 +224,7 @@ class FixtureTest(unittest.TestCase):
             self.assertIn(label, skipped)
         code, result = run_json(fixture("partial-title-only.md"), "--full")
         self.assertEqual(code, 1)
-        self.assertEqual(set(ids(result, "FAIL")), {"X1", "X2", "X3", "X4"})
+        self.assertEqual(set(ids(result, "FAIL")), {"X1", "X2", "X3", "X4", "X8"})
         missing = [c["field"] for c in entries(result, "X1", "FAIL")]
         self.assertEqual(sorted(missing), ["Bullet Points", "Search Terms", "关键词分配表"])
 
@@ -555,6 +555,16 @@ class StructureTest(unittest.TestCase):
                 + "| Q02 | Pet safe? | 实测 | 高 | 有 | 五点 | Bullet 2 | 已覆盖 |\n")
         result = check("## 必答问题表\n\n" + QA_HEADER + rows)
         self.assertEqual(entries(result, "X2f", "WARN")[0]["measured"], "Q01")
+
+    def test_backend_attributes_need_a_source_and_a_front_end_link(self):
+        table = ("## 后台属性表\n\n| 属性 | 值 | 依据 | 对应前台哪句 |\n|---|---|---|---|\n"
+                 "| Material | Faux Wool | 用户资料：规格表 | Bullet 4 |\n"
+                 "| Pile Height | 0.2 in | — | Bullet 1 |\n"
+                 "| Weave Type | Machine Made | 用户资料：规格表 | |\n")
+        self.assertEqual(entries(check(table), "X8", "FAIL")[0]["measured"], "Pile Height")
+        # 对应前台哪句 is filled during the check pass, so only a full check asks for it.
+        self.assertEqual([c["level"] for c in entries(check(table), "X8b")], ["SKIP"])
+        self.assertEqual(entries(check(table, full=True), "X8b", "WARN")[0]["measured"], "Weave Type")
 
     def test_tables_are_read_by_header_text_not_position(self):
         table = ("## 宣称依据表\n\n| 依据 | 编号 | 买家能看到的宣称 | 出现位置 |\n|---|---|---|---|\n"
