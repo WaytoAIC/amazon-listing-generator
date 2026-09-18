@@ -45,76 +45,18 @@
 | 类目主词、结构、趋势、集中度 | 类目和市场 |
 
 买家真实问过什么，不在这张表里——那个走 modules/00-alexa-insight.md。
-## 推荐补强顺序
+## 补强顺序和落到哪个字段
 
-### 1. 自家产品与竞品基础面
+从上到下做，时间不够就只做前两行。
 
-先拿这些信息：
+| 顺序 | 补什么 | 落到哪 |
+|---|---|---|
+| 1 | 自家和 3 到 5 个竞品的标题、类目、价格带、评分、变体、基础属性；竞品第一眼强调什么 | product_name、category_term、market_positioning、competitor_insights |
+| 2 | 主词、高价值转化词、长尾词、兼容词、场景词、问题词 | keyword_pool、semantic_buckets。补完先做关键词四层分配（modules/03-keyword-allocation.md）再起草 |
+| 3 | 高频差评原因、正评里的购买理由、误用场景、兼容和安装抱怨 | review_insights.pains / expectations / misuse、buyer_questions |
+| 4 | 价格带属于低中高端、市场主流怎么沟通、哪些卖点是标配哪些是差异点 | brand_tone、market_positioning、competitor_insights |
 
-- 自家产品标题、类目、价格、评分、变体、基础属性
-- 3 到 5 个竞品的标题、价格带、评分和类目位置
-- 竞品前台第一眼强调的点
-
-输出到这些字段：
-
-- `product_name`
-- `category_term`
-- `market_positioning.category`
-- `market_positioning.price_band`
-- `competitor_insights`
-- `market_positioning.competitor_patterns`
-
-### 2. 关键词与词路
-
-重点补这些：
-
-- 主词
-- 高价值转化词
-- 长尾词
-- 兼容词
-- 场景词
-- 问题词
-
-输出到这些字段：
-
-- `keyword_pool.core`
-- `keyword_pool.secondary`
-- `keyword_pool.long_tail`
-- `semantic_buckets`
-
-每条关键词可以带上热度和出处。关键词补完后，先做关键词四层分配（见 modules/03-keyword-allocation.md），再进入起草。
-
-### 3. 评论与痛点
-
-重点抽这些：
-
-- 高频差评原因
-- 正评中最常被提到的购买理由
-- 用户误用场景
-- 兼容或安装相关抱怨
-
-输出到这些字段：
-
-- `review_insights.pains`
-- `review_insights.expectations`
-- `review_insights.misuse`
-- `buyer_questions`（评论和问答里买家反复问的问题，是必答问题表的来源）
-
-每条洞察可以带上出处，方便回溯。买家问题这一项，优先用 Alexa 问答采集直接问竞品，比从评论里归纳准，见 modules/00-alexa-insight.md。
-
-### 4. 类目和定位
-
-重点补这些：
-
-- 当前价格带属于低、中还是中高端
-- 市场主流沟通方式是什么
-- 哪些卖点是行业标配，哪些才是差异点
-
-输出到这些字段：
-
-- `brand_tone`
-- `market_positioning`
-- `competitor_insights`
+每条都带上出处，方便回溯。买家真实问过什么优先用 Alexa 问答采集直接问竞品，比从评论里归纳准，见 modules/00-alexa-insight.md。
 
 ## 模块映射
 
@@ -140,11 +82,4 @@
 - 不要把评论中的个别用户表述写成稳定结论，除非有反复出现的证据。
 - 如果 MCP 抓到的自家商品标题或详情页本身可能有错误，不要直接复制进新文案，先与用户给的资料对照。
 
-## 最小可行输出
 
-如果 MCP 可用但时间有限，至少补强以下 4 项再写 Listing：
-
-1. 关键词主词和长尾词
-2. 3 个竞品的第一眼信息结构
-3. 高频评论痛点和误用
-4. 兼容风险或限制条件
