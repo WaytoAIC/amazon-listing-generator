@@ -45,6 +45,9 @@ Rebuilds the skill from a set of prompts into a pipeline with inputs fixed befor
 
 ### Fixed
 
+- Main images are no longer treated as always-white: a limited set of product types may use a lifestyle main image (with no text or extra logos), decided by the category's product page style guide. When in doubt the brief now carries both a white-background and a lifestyle version
+- Small images are never upscaled to hit a pixel target — Amazon forbids artificially enlarging them. Cropping the margin and flattening the background to pure white are still fine
+- Premium A+ is no longer gated behind a permission the seller has to claim: it costs nothing extra and has no eligibility criteria, so the brief now plans for Premium by default and drops to Basic only on request. Brand story is covered as a third content type that coexists with either
 - A verdict written as "not covered, but minor" no longer slips past the uncovered-question warning: the leading word decides and a reason may follow it; verdicts outside the four allowed words are now flagged
 - A deliverable with no copy sections no longer reports a fingerprint. Every such file used to share one constant hash, which read as a match between unrelated files; the report now says there is no copy to fingerprint
 

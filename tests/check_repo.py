@@ -20,7 +20,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 
-BUDGETS = {"SKILL.md": 6000, "text_module": 2200, "visual_module": 3000, "corpus": 36000}
+# The corpus cap keeps a full-pack run's reading manageable. Raise it only for rules verified
+# against an Amazon help page, and only after trimming what is actually redundant — never to
+# make room for longer prose. 2026-09-18: 36000 -> 38000 for the corrected image and A+ rules.
+BUDGETS = {"SKILL.md": 6000, "text_module": 2200, "visual_module": 3000, "corpus": 38000}
 README_PREFIX_SHA256 = "28e7413c09e7722683e7a30fe51e341bf95826ce97b191c0b462f027cdc20965"
 DEPRECATED = [
     "country_site", "bullet_points", "usps_specs", "backend_terms", "backend_keywords",
