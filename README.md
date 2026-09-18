@@ -47,7 +47,7 @@ curl -fsSL https://raw.githubusercontent.com/WaytoAIC/waytoaic-amazon-listing-ge
 
 ```bash
 # Version-pinned
-curl -fsSL https://raw.githubusercontent.com/WaytoAIC/waytoaic-amazon-listing-generator/v2.0.0/install.sh | bash -s -- --target codex --ref v2.0.0
+curl -fsSL https://raw.githubusercontent.com/WaytoAIC/waytoaic-amazon-listing-generator/v2.0.1/install.sh | bash -s -- --target codex --ref v2.0.1
 ```
 
 复制即用。安装后重启 Codex / OpenClaw。

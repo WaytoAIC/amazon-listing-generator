@@ -6,6 +6,12 @@ The format is intentionally simple and optimized for release notes and repositor
 
 ## [Unreleased]
 
+## [v2.0.1] - 2026-09-18
+
+### Fixed
+
+- The installer refuses any extracted source that does not carry a `SKILL.md` at its root. The sync step runs with `--delete` against `"$SOURCE_DIR/"`, so an empty `SOURCE_DIR` would expand to `/` and copy the whole filesystem into the install directory. The previous guard only checked for an empty string; it now also requires a real directory containing this skill
+
 ## [v2.0.0] - 2026-09-18
 
 Rebuilds the skill from a set of prompts into a pipeline with inputs fixed before writing, a script check after writing, and one round of rework in between.
