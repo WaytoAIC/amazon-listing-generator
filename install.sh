@@ -2,7 +2,7 @@
 
 set -eu
 
-REPO="WaytoAIC/amazon-listing-generator"
+REPO="WaytoAIC/waytoaic-amazon-listing-generator"
 REF="main"
 SKILL_NAME="waytoaic-amazon-listing-generator"
 LEGACY_SKILL_NAME="amazon-listing-generator"
@@ -24,7 +24,7 @@ Options:
   --target   Install target. auto|codex|openclaw. Default: auto
   --dest     Override the skills root directory. The script installs into DIR/waytoaic-amazon-listing-generator
   --ref      Branch or tag to install. Default: main
-  --repo     GitHub repo in OWNER/REPO form. Default: WaytoAIC/amazon-listing-generator
+  --repo     GitHub repo in OWNER/REPO form. Default: WaytoAIC/waytoaic-amazon-listing-generator
   -h, --help Show this help
 EOF
 }
