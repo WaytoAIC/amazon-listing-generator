@@ -8,8 +8,8 @@ must_answer，以及被检查的标题、Item Highlights、五点、描述、Sea
 
 ## 做法
 
-1. 没有必答问题表，就先按 00-must-answer-questions.md 建一张。
-2. 商品已经上架（改旧稿、复盘迭代）时优先实测：把必答问题表的「问题」列按站点语言每行一题导出，用 Alexa 问答采集工具问自己的商品，做法见 references/alexa-insight.md。拿回来的回答就是 Alexa 眼里这条 Listing 的样子，比自己推演准。
+1. 没有必答问题表，就先按 01-must-answer-questions.md 建一张。
+2. 商品已经上架（改旧稿、复盘迭代）时优先实测：把必答问题表的「问题」列按站点语言每行一题导出，用 Alexa 问答采集工具问自己的商品，做法见 00-alexa-insight.md。拿回来的回答就是 Alexa 眼里这条 Listing 的样子，比自己推演准。
 3. 没上架、或工具跑不了时，逐条扮演 Alexa 购物助手作答：只许引用或复述 Listing 里明确存在的信息，不用常识补完。
 4. 填后两列：
    - 实际由哪句回答：写出位置和原句，如“Bullet 2：Holds 32 oz …”；实测来的写 Alexa 的原话，并注明是实测

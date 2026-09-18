@@ -24,7 +24,7 @@ Rebuilds the skill from a set of prompts into a pipeline with inputs fixed befor
 - Review-and-iterate mode: locate the funnel stage, change at most two modules per round, log hypothesis and review date
 - Two-version output on request: a search-coverage version and a conversion version
 - Brand tone fallback (compact Brand OS card) for visual tasks without a brand tone
-- `references/alexa-insight.md`: optional path for collecting real buyer questions by asking Alexa for Shopping in bulk (amazon-alexa-insight / apinsight), used two ways — ask competitors to learn what buyers care about, and ask your own live product to verify coverage with measured answers instead of a simulation; falls back to simulated questions when the tool is unavailable
+- Alexa question collection as the first preparation module (`references/modules/00-alexa-insight.md`), built on [amazon-alexa-insight](https://github.com/WaytoAIC/amazon-alexa-insight). Used two ways: ask competitors to learn what buyers care about, and ask your own live product to verify coverage with measured answers instead of a simulation. Three ways to feed it — a CSV / Excel / JSON the user exported from the browser extension, the CLI run by the skill, or neither, in which case the skill writes its own questions and says so. Preparation modules renumbered 01–04 to make room
 - Newly covered Amazon rules: Alexa for Shopping, AI-generated people metadata tag, A+ and video content rules, description HTML rule, narrowed review sharing across variations
 
 ### Changed

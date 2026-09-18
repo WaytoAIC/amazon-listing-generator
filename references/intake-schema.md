@@ -70,7 +70,7 @@ data_sources:
   user_materials: []
   marketplace_urls: []
   mcp: {sorftime: {enabled: false}, sellersprite: {enabled: false}}
-  alexa_insight: {enabled: false, runs: []}   # Alexa 问答采集，见 alexa-insight.md
+  alexa_insight: {enabled: false, runs: []}   # Alexa 问答采集，见 modules/00-alexa-insight.md
 ```
 
 过程产物由前置步骤生成，不要求用户填：`must_answer`（必答问题表）、`user_stories`（用户故事表）、`keyword_allocation`（title / item_highlights / bullets_aplus / search_terms / unused）、`backend_attributes`（后台属性表）。
@@ -88,7 +88,8 @@ data_sources:
 
 | 模块 | 缺了就不能做的输入 | 需要先做的准备步骤 |
 |---|---|---|
-| 必答问题表 | product_name、usps、specs | — |
+| Alexa 问答采集 | 用户给的导出文件，或本机装了采集工具；再加竞品编号，或自己已上架的商品编号 | — |
+| 必答问题表 | product_name、usps、specs | Alexa 问答采集（采不到就跳过，问题来源降级） |
 | 用户故事表 | usps、audience_scenarios | 必答问题表 |
 | 关键词四层分配 | product_name、keyword_pool、usps、specs | — |
 | 后台属性表 | specs、materials、compatibility、package_contents | — |

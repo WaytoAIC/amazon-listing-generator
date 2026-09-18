@@ -1,6 +1,6 @@
 ---
 name: amazon-listing-generator
-description: 生成和优化亚马逊 Listing 全套内容。先定买家必答问题、用户故事、关键词分配和后台属性，再写标题（不超过 75 字符）、Item Highlights、五点、商品描述、Search Terms，出图片、A+、视频需求单，最后做 Alexa 购物助手（原 Rufus）问答覆盖验证和带脚本的合规检查。也用于只做单个模块、把超长旧标题拆成合规标题加 Item Highlights、审核和改写已有 Listing、按上线数据复盘迭代。接入 Sorftime、卖家精灵等 Amazon 数据 MCP 时先做数据补强。
+description: 生成和优化亚马逊 Listing 全套内容。先定买家必答问题、用户故事、关键词分配和后台属性，再写标题（不超过 75 字符）、Item Highlights、五点、商品描述、Search Terms，出图片、A+、视频需求单，最后做 Alexa 购物助手（原 Rufus）问答覆盖验证和带脚本的合规检查。也用于只做单个模块、把超长旧标题拆成合规标题加 Item Highlights、审核和改写已有 Listing、按上线数据复盘迭代。买家问什么可以直接问 Alexa 采集回来，用户给导出文件或本机装了 amazon-alexa-insight 都行。接入 Sorftime、卖家精灵等 Amazon 数据 MCP 时先做数据补强。
 metadata:
   version: "2.0.0"
 ---
@@ -26,10 +26,11 @@ metadata:
 
 | 段 | 步骤 | 读哪个文件 | 全套生成时什么情况跳过 |
 |---|---|---|---|
-| 准备 | 买家必答问题表 | references/modules/00-must-answer-questions.md | — |
-| 准备 | 卖点 → 用户故事 | references/modules/01-user-stories.md | — |
-| 准备 | 关键词四层分配 | references/modules/02-keyword-allocation.md | — |
-| 准备 | 后台属性表 | references/modules/03-backend-attributes.md | — |
+| 准备 | Alexa 问答采集 | references/modules/00-alexa-insight.md | 用户既没有导出文件、本机也没装工具 |
+| 准备 | 买家必答问题表 | references/modules/01-must-answer-questions.md | — |
+| 准备 | 卖点 → 用户故事 | references/modules/02-user-stories.md | — |
+| 准备 | 关键词四层分配 | references/modules/03-keyword-allocation.md | — |
+| 准备 | 后台属性表 | references/modules/04-backend-attributes.md | — |
 | 文字 | 标题 + Item Highlights | references/modules/10-title-highlights.md | — |
 | 文字 | 五点 + 商品描述 | references/modules/11-bullets-description.md | 描述：能做 A+ 且用户没要时不写 |
 | 文字 | Search Terms | references/modules/12-search-terms.md | — |
@@ -39,7 +40,7 @@ metadata:
 | 检查 | Alexa 问答覆盖验证 | references/modules/30-alexa-coverage-check.md | — |
 | 检查 | 合规检查（跑脚本） | references/modules/31-compliance-check.md | — |
 
-按需读：有变体读 references/variation-family.md；要做视觉模块而没有品牌调性，读 references/brand-os.md；要拿买家真实问过的问题，读 references/alexa-insight.md。
+按需读：有变体读 references/variation-family.md；要做视觉模块而没有品牌调性，读 references/brand-os.md。
 
 ## 交付
 

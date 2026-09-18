@@ -64,7 +64,7 @@ curl -fsSL https://raw.githubusercontent.com/WaytoAIC/amazon-listing-generator/v
 ### v2.0 有什么不一样
 
 - 先定问题再动笔：写之前先列出买家必答问题，写完逐条验证答上了没有；没依据的问题不回答、不暗示，记进待办
-- 买家问什么不靠猜：装了 [amazon-alexa-insight](https://github.com/WaytoAIC/amazon-alexa-insight) 就直接问 Alexa 购物助手——问竞品摸清买家在意什么，问自己已上架的商品看它到底怎么答。没装就退回自己出题，流程照跑
+- 买家问什么不靠猜，直接问 Alexa：流水线第一步就是 Alexa 问答采集，问竞品摸清买家在意什么，问自己已上架的商品看它到底怎么答。三条路——你把 [amazon-alexa-insight](https://github.com/WaytoAIC/amazon-alexa-insight) 插件导出的 CSV / Excel / JSON 直接丢进来；或者本机装了它的命令行让 skill 自己跑；两样都没有就退回自己出题，流程照跑
 - 补上后台属性表：先把准确数值定下来，文案照着写，前台和后台不打架
 - 卖点先翻成用户故事：五点、图片、A+、视频共用一张表，不再各写各的
 - 图片、A+、视频需求单升级：每张图只担一个任务、写明禁入元素、配英文生图提示词；视频给分镜表和一致性规则。只出需求单和提示词，不绑定任何作图或视频工具
@@ -150,7 +150,7 @@ When Sorftime, Sellersprite, or similar Amazon data MCPs are connected, the skil
 ### What is new in v2.0
 
 - Questions first, copy second: the skill lists the questions a buyer must get answered before writing, then verifies each one after writing. Questions with no supporting facts are neither answered nor implied, and go to a to-do list
-- Buyer questions are asked, not guessed: with [amazon-alexa-insight](https://github.com/WaytoAIC/amazon-alexa-insight) installed, the skill asks Alexa for Shopping directly — competitors, to learn what buyers care about, and your own live product, to see what it actually tells shoppers. Without it, the skill writes its own questions and the pipeline still runs
+- Buyer questions are asked, not guessed: the pipeline opens with an Alexa question-collection step — competitors, to learn what buyers care about, and your own live product, to see what Alexa actually tells shoppers. Three ways in: hand over a CSV / Excel / JSON exported from the [amazon-alexa-insight](https://github.com/WaytoAIC/amazon-alexa-insight) extension, let the skill run its CLI if you have it installed, or skip it — the skill then writes its own questions and the pipeline still runs
 - A backend attribute sheet: exact values are fixed first and the copy follows them, so the front end and the back end agree
 - Selling points become user stories: bullets, images, A+, and video share one table instead of drifting apart
 - Upgraded image, A+, and video briefs: one job per image, explicit forbidden elements, an English image-generation prompt per slot, and a video shot list with consistency rules. Briefs and prompts only; no image or video tool is called

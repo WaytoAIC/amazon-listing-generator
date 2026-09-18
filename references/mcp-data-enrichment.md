@@ -107,7 +107,7 @@
 - `keyword_pool.long_tail`
 - `semantic_buckets`
 
-每条关键词可以带上热度和出处。关键词补完后，先做关键词四层分配（见 modules/02-keyword-allocation.md），再进入起草。
+每条关键词可以带上热度和出处。关键词补完后，先做关键词四层分配（见 modules/03-keyword-allocation.md），再进入起草。
 
 ### 3. 评论与痛点
 
@@ -125,7 +125,7 @@
 - `review_insights.misuse`
 - `buyer_questions`（评论和问答里买家反复问的问题，是必答问题表的来源）
 
-每条洞察可以带上出处，方便回溯。买家问题这一项，优先用 Alexa 问答采集直接问竞品，比从评论里归纳准，见 alexa-insight.md。
+每条洞察可以带上出处，方便回溯。买家问题这一项，优先用 Alexa 问答采集直接问竞品，比从评论里归纳准，见 modules/00-alexa-insight.md。
 
 ### 4. 类目和定位
 
