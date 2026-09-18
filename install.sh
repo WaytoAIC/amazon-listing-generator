@@ -123,8 +123,12 @@ download_archive
 tar -xzf "$ARCHIVE_PATH" -C "$EXTRACT_DIR"
 
 SOURCE_DIR="$(find "$EXTRACT_DIR" -mindepth 1 -maxdepth 1 -type d | head -n 1)"
-if [ -z "$SOURCE_DIR" ]; then
-  echo "Failed to extract repository archive." >&2
+
+# rsync below runs with --delete against "$SOURCE_DIR/". If SOURCE_DIR were ever empty that
+# expands to "/", which would copy the whole filesystem into the install directory. Refuse
+# anything that is not an extracted copy of this skill.
+if [ -z "${SOURCE_DIR:-}" ] || [ ! -d "$SOURCE_DIR" ] || [ ! -f "$SOURCE_DIR/SKILL.md" ]; then
+  echo "The extracted archive does not look like this skill (no SKILL.md). Aborting." >&2
   exit 1
 fi
 
