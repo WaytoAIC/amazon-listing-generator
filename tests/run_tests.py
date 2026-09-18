@@ -528,6 +528,21 @@ class StructureTest(unittest.TestCase):
         result = check("## 必答问题表\n\n" + QA_HEADER + "| Q01 | Size? | 实采 | 高 | maybe | 标题 | Title | 已覆盖 |\n")
         self.assertEqual(entries(result, "X2e", "WARN")[0]["measured"], "Q01")
 
+    def test_verdict_keeps_its_meaning_when_a_reason_follows_it(self):
+        # Writers append a reason after the verdict word; the leading word still decides.
+        rows = ("| Q01 | Fits a door? | 实测 | 高 | 有 | 五点 | | 未覆盖，但影响不大 |\n"
+                + "| Q02 | Pet safe? | 模拟 | 低 | 无 | 不写 | | 不写。没有检测报告 |\n"
+                + "| Q03 | Machine washable? | 实测 | 高 | 有 | 五点 | Bullet 3 | 已覆盖 |\n")
+        result = check("## 必答问题表\n\n" + QA_HEADER + rows)
+        self.assertEqual(entries(result, "X2d", "WARN")[0]["measured"], "Q01")
+        self.assertEqual(entries(result, "X2f", "PASS")[0]["level"], "PASS")
+
+    def test_verdict_outside_the_four_values_warns(self):
+        rows = ("| Q01 | Fits a door? | 实测 | 高 | 有 | 五点 | Bullet 1 | 回头再说 |\n"
+                + "| Q02 | Pet safe? | 实测 | 高 | 有 | 五点 | Bullet 2 | 已覆盖 |\n")
+        result = check("## 必答问题表\n\n" + QA_HEADER + rows)
+        self.assertEqual(entries(result, "X2f", "WARN")[0]["measured"], "Q01")
+
     def test_tables_are_read_by_header_text_not_position(self):
         table = ("## 宣称依据表\n\n| 依据 | 编号 | 买家能看到的宣称 | 出现位置 |\n|---|---|---|---|\n"
                  "| 用户资料：规格表 | C01 | 1-2 Cup | Title |\n| — | C02 | dishwasher safe | Bullet 3 |\n"

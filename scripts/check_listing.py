@@ -111,6 +111,7 @@ CAUTION_TERMS = (
 # Cell values that mean "nothing here".
 DASH_VALUES = frozenset(("", "—", "——", "–", "-", "--", "/"))
 NOT_ANSWERED_VALUES = DASH_VALUES | frozenset(("无", "不写"))
+VERDICT_VALUES = ("已覆盖", "部分覆盖", "未覆盖", "不写")
 NO_EVIDENCE_VALUES = DASH_VALUES | frozenset(("无", "暂无", "没有", "n/a", "na", "none", "tbd"))
 
 # --- Regexes --------------------------------------------------------------
@@ -999,6 +1000,15 @@ def evidence_kind(value):
     return ""
 
 
+def verdict_kind(value):
+    """Leading enum word of a 判定 cell. Writers often append a reason after it."""
+    text = value.strip()
+    for name in VERDICT_VALUES:
+        if text.startswith(name):
+            return name
+    return ""
+
+
 def table_is_empty(rep, cid, label, rows, ctx):
     """Record whether the table has data rows. Returns True when there is nothing to check."""
     if rows:
@@ -1029,23 +1039,27 @@ def check_qa_table(rep, doc, ctx):
         rep.add("X2", label, FAIL, "表头被改过，找不到这些列", "、".join(lost), "不要改表头")
         return
     table = [(row_name(row, cols["编号"], i), evidence_kind(cell_value(row, cols["有无依据"])),
-              cell_value(row, cols["实际由哪句回答"]), cell_value(row, cols["判定"])) for i, row in enumerate(rows)]
+              cell_value(row, cols["实际由哪句回答"]), cell_value(row, cols["判定"]).strip(),
+              verdict_kind(cell_value(row, cols["判定"]))) for i, row in enumerate(rows)]
 
     # The table is filled in two passes. Rows without evidence already get 判定 = 不写 in the
     # first pass, so only another verdict shows that the second pass has started.
-    if ctx.full or any(verdict not in ("", "不写") for _n, _k, _a, verdict in table):
-        unjudged = [name for name, kind, _a, verdict in table if kind in ("有", "部分") and not verdict]
+    if ctx.full or any(kind not in ("", "不写") for _n, _k, _a, _v, kind in table):
+        unjudged = [name for name, kind, _a, verdict, _vk in table if kind in ("有", "部分") and not verdict]
         rep.judge("X2b", label, unjudged, FAIL, "有依据的问题要填判定", "、".join(unjudged),
                   "有无依据是 有 / 部分 的行都要填判定")
     else:
         rep.add("X2b", label, SKIP, "判定列还没开始填（写完文案再填），这一项先不查")
-    answered = [name for name, kind, answer, _v in table if kind == "无" and answer not in NOT_ANSWERED_VALUES]
+    answered = [name for name, kind, answer, _v, _vk in table if kind == "无" and answer not in NOT_ANSWERED_VALUES]
     rep.judge("X2c", label, answered, FAIL, "没依据的问题不回答", "、".join(answered),
               "有无依据是 无 的行，“实际由哪句回答”留空或写 不写")
-    uncovered = [name for name, _k, _a, verdict in table if verdict == "未覆盖"]
+    uncovered = [name for name, _k, _a, _v, kind in table if kind == "未覆盖"]
     rep.judge("X2d", label, uncovered, WARN, "判定为未覆盖的问题", "、".join(uncovered), "补进文案，或改成 不写 并说明")
-    unknown = [name for name, kind, _a, _v in table if not kind]
+    unknown = [name for name, kind, _a, _v, _vk in table if not kind]
     rep.judge("X2e", label, unknown, WARN, "有无依据的取值", "、".join(unknown), "只填 有 / 部分 / 无")
+    odd = [name for name, _k, _a, verdict, kind in table if verdict and not kind]
+    rep.judge("X2f", label, odd, WARN, "判定的取值", "、".join(odd),
+              "开头写 " + " / ".join(VERDICT_VALUES) + "，理由写在后面")
 
 
 def check_claims_table(rep, doc, ctx):
