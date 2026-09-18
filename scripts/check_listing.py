@@ -58,7 +58,11 @@ HEADING_ALIASES = {
     "keyword_table": ("关键词分配表",),
     "attr_table": ("后台属性表",),
     "image_brief": ("图片需求单",),
+    "aplus_brief": ("a+ 需求单",),  # heading_key lowercases before matching
     "video_brief": ("视频分镜表",),
+    "story_table": ("用户故事表",),
+    "manual_check": ("人工判断检查",),
+    "iteration_log": ("迭代记录",),
     "params": ("检查参数",),
     "report": ("机器检查结果",),
 }
@@ -76,14 +80,19 @@ SECTION_LABEL = {
     "keyword_table": "关键词分配表",
     "attr_table": "后台属性表",
     "image_brief": "图片需求单",
+    "aplus_brief": "A+ 需求单",
     "video_brief": "视频分镜表",
+    "story_table": "用户故事表",
+    "manual_check": "人工判断检查",
+    "iteration_log": "迭代记录",
     "params": "检查参数",
     "report": "机器检查结果",
 }
 COPY_KEYS = ("title", "highlights", "bullets", "description", "search_terms")
 # Sections the script actually inspects. A file with none of them is a usage error.
 CHECKABLE_KEYS = COPY_KEYS + ("qa_table", "claims_table", "attr_table", "todo", "variation_table",
-                              "keyword_table", "image_brief", "video_brief")
+                              "keyword_table", "image_brief", "aplus_brief", "video_brief",
+                              "story_table", "manual_check", "iteration_log")
 
 # --- Word lists -----------------------------------------------------------
 STOP_WORDS = frozenset(
@@ -1003,7 +1012,8 @@ REQUIRED_IN_FULL = ("title", "highlights", "bullets", "search_terms", "keyword_t
                     "claims_table", "attr_table", "todo")
 MISSING_ID = {"title": "X1", "highlights": "X1", "bullets": "X1", "search_terms": "X1", "keyword_table": "X1",
               "qa_table": "X2", "claims_table": "X3", "attr_table": "X8", "todo": "X4", "description": "D1",
-              "variation_table": "X5", "image_brief": "X9", "video_brief": "X9"}
+              "variation_table": "X5", "image_brief": "X9", "aplus_brief": "X9",
+              "video_brief": "X9", "story_table": "X10", "manual_check": "X11", "iteration_log": "X12"}
 MISSING_MESSAGE = "文件里没有这个小节"
 
 
@@ -1168,10 +1178,49 @@ def check_attr_table(rep, doc, ctx):
 STORYBOARD_CELLS = 9
 
 
+MANUAL_CHECK_VALUES = ("合规", "风险", "违规")
+
+
 def check_image_brief(rep, doc, ctx):
     label = SECTION_LABEL["image_brief"]
     rows = data_rows(parse_table(doc.sections["image_brief"].lines)[1])
     table_is_empty(rep, "X9", label, rows, ctx)
+
+
+def check_aplus_brief(rep, doc, ctx):
+    label = SECTION_LABEL["aplus_brief"]
+    rows = data_rows(parse_table(doc.sections["aplus_brief"].lines)[1])
+    table_is_empty(rep, "X9", label, rows, ctx)
+
+
+def check_story_table(rep, doc, ctx):
+    label = SECTION_LABEL["story_table"]
+    rows = data_rows(parse_table(doc.sections["story_table"].lines)[1])
+    table_is_empty(rep, "X10", label, rows, ctx)
+
+
+def check_iteration_log(rep, doc, ctx):
+    label = SECTION_LABEL["iteration_log"]
+    rows = data_rows(parse_table(doc.sections["iteration_log"].lines)[1])
+    table_is_empty(rep, "X12", label, rows, ctx)
+
+
+def check_manual_check(rep, doc, ctx):
+    """Human judgment section: every row states one of the three allowed results."""
+    label = SECTION_LABEL["manual_check"]
+    headers, rows = parse_table(doc.sections["manual_check"].lines)
+    rows = data_rows(rows)
+    if table_is_empty(rep, "X11", label, rows, ctx):
+        return
+    result = find_column(headers, "结果")
+    if result is None:
+        rep.add("X11", label, FAIL, "表头被改过，找不到这一列", "结果", "不要改表头")
+        return
+    name_column = find_column(headers, "检查项")
+    odd = [row_name(row, name_column, i) for i, row in enumerate(rows)
+           if not cell_value(row, result).strip().startswith(MANUAL_CHECK_VALUES)]
+    rep.judge("X11", label, odd, WARN, "人工判断的结果取值", "、".join(odd),
+              "开头写 " + " / ".join(MANUAL_CHECK_VALUES) + "，说明写在后面")
 
 
 def check_video_brief(rep, doc, ctx):
@@ -1332,7 +1381,9 @@ def check_text(text, file_label="-", full=False, overrides=None):
     add_length_overview(rep, fields)
     for key, check in (("keyword_table", check_keyword_table), ("qa_table", check_qa_table),
                        ("claims_table", check_claims_table), ("attr_table", check_attr_table),
-                       ("image_brief", check_image_brief), ("video_brief", check_video_brief),
+                       ("image_brief", check_image_brief), ("aplus_brief", check_aplus_brief),
+                       ("video_brief", check_video_brief), ("story_table", check_story_table),
+                       ("manual_check", check_manual_check), ("iteration_log", check_iteration_log),
                        ("todo", check_todo), ("variation_table", check_variation_table)):
         if doc.has(key):
             check(rep, doc, ctx)

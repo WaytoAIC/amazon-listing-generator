@@ -566,6 +566,13 @@ class StructureTest(unittest.TestCase):
         self.assertEqual([c["level"] for c in entries(check(table), "X8b")], ["SKIP"])
         self.assertEqual(entries(check(table, full=True), "X8b", "WARN")[0]["measured"], "Weave Type")
 
+    def test_manual_check_results_use_the_three_allowed_words(self):
+        head = "## 人工判断检查\n\n| 检查项 | 结果 | 说明 |\n|---|---|---|\n"
+        good = head + "| 宣称依据 | 合规 | 逐条对上了 |\n| 类目要求 | 风险：缺资料 | 没有类目模板 |\n"
+        self.assertEqual([c["level"] for c in entries(check(good), "X11")], ["PASS", "PASS"])
+        bad = head + "| 宣称依据 | 看着还行 | — |\n"
+        self.assertEqual(entries(check(bad), "X11", "WARN")[0]["measured"], "宣称依据")
+
     def test_fingerprint_says_so_when_there_is_no_copy_to_fingerprint(self):
         # Every copy-less file would otherwise share one constant hash, which reads as a match.
         self.assertEqual(check("## 上架前待办\n\n无\n")["fingerprint"], "无文案")

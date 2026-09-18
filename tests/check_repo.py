@@ -152,6 +152,28 @@ def lint_frontmatter():
             fail("frontmatter", f"description is {len(value)} chars, over 1024")
 
 
+def lint_template_sections():
+    """Every table the template carries must be one the checker knows about.
+
+    Adding a section to the template without teaching the checker is silent: the section
+    can go missing or turn to garbage and the run still reports a pass.
+    """
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("cl", ROOT / "scripts" / "check_listing.py")
+    checker = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(checker)
+    text = read(ROOT / "assets" / "listing-package-template.md")
+    heading, has_table = None, False
+    for line in text.split("\n") + ["## "]:
+        if line.startswith("## "):
+            if heading and has_table and checker.heading_key(heading) is None:
+                fail("template", f"「{heading}」是表格小节，但检查脚本不认识它")
+            heading, has_table = line[3:].strip(), False
+        elif line.lstrip().startswith("|"):
+            has_table = True
+
+
 def main():
     total = lint_budgets()
     lint_links()
@@ -159,6 +181,7 @@ def main():
     lint_numbers()
     lint_readme_prefix()
     lint_frontmatter()
+    lint_template_sections()
     print(f"instruction corpus: {total} chars (budget {BUDGETS['corpus']})")
     if failures:
         print(f"FAIL: {len(failures)} problem(s)")
