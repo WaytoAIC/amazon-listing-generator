@@ -566,6 +566,13 @@ class StructureTest(unittest.TestCase):
         self.assertEqual([c["level"] for c in entries(check(table), "X8b")], ["SKIP"])
         self.assertEqual(entries(check(table, full=True), "X8b", "WARN")[0]["measured"], "Weave Type")
 
+    def test_fingerprint_says_so_when_there_is_no_copy_to_fingerprint(self):
+        # Every copy-less file would otherwise share one constant hash, which reads as a match.
+        self.assertEqual(check("## 上架前待办\n\n无\n")["fingerprint"], "无文案")
+        self.assertEqual(check("## 关键词分配表\n\n无\n")["fingerprint"], "无文案")
+        with_copy = check(package(title="Brewlane Ceramic Dripper, 1-2 Cup"))["fingerprint"]
+        self.assertRegex(with_copy, r"^[0-9a-f]{8}$")
+
     def test_visual_briefs_are_checked_only_when_present(self):
         shots = ("## 视频分镜表\n\n| 镜头 | 目的 | 画面 |\n|---|---|---|\n"
                  + "".join("| %d | 目的 | 画面 |\n" % i for i in range(1, 4)))

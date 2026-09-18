@@ -598,7 +598,14 @@ def extract_field(doc, key):
 
 
 def fingerprint(fields):
+    """Ties a check result to the copy it was run on.
+
+    With no copy in the file there is nothing to tie it to, and a hash of "" would be the
+    same constant for every such file — which reads as a match when it is not one.
+    """
     parts = [fields[key].text.strip() for key in COPY_KEYS]
+    if not any(parts):
+        return "无文案"
     return hashlib.sha1(nfc("\n\n".join(parts)).encode("utf-8")).hexdigest()[:8]
 
 
