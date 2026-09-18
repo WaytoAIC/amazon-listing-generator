@@ -42,7 +42,7 @@ compliance_notes: []               # 其余用文字写的限制
 # 市场
 competitor_insights: []            # 写“什么信息值得前置”，不写谁卖得好
 review_insights: {pains: [], expectations: [], misuse: []}   # 每条可带出处
-buyer_questions: []                # 用户实采的 Alexa 问答、竞品问答、客服高频问题
+buyer_questions: []                # 实测或实采的 Alexa 问答、竞品问答、客服高频问题；每条记来源
 market_positioning: {category: "", price_band: "", competitor_patterns: []}
 
 # 品牌与视觉
@@ -70,6 +70,7 @@ data_sources:
   user_materials: []
   marketplace_urls: []
   mcp: {sorftime: {enabled: false}, sellersprite: {enabled: false}}
+  alexa_insight: {enabled: false, runs: []}   # Alexa 问答采集，见 alexa-insight.md
 ```
 
 过程产物由前置步骤生成，不要求用户填：`must_answer`（必答问题表）、`user_stories`（用户故事表）、`keyword_allocation`（title / item_highlights / bullets_aplus / search_terms / unused）、`backend_attributes`（后台属性表）。

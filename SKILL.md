@@ -39,7 +39,7 @@ metadata:
 | 检查 | Alexa 问答覆盖验证 | references/modules/30-alexa-coverage-check.md | — |
 | 检查 | 合规检查（跑脚本） | references/modules/31-compliance-check.md | — |
 
-按需读：有变体读 references/variation-family.md；要做视觉模块而没有品牌调性，读 references/brand-os.md。
+按需读：有变体读 references/variation-family.md；要做视觉模块而没有品牌调性，读 references/brand-os.md；要拿买家真实问过的问题，读 references/alexa-insight.md。
 
 ## 交付
 
